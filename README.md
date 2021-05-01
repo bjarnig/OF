@@ -1,5 +1,5 @@
 # OF
-* OF is a small software framework named OF that consists of four main process categories: 
+A small software framework that consists of four main process categories: 
 * Synthesis processes with dynamic waveform generation
 * Atomic sound transformations that adapt to incoming signals
 * Operation pipelines and algorithms to control and generate them
