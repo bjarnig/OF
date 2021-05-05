@@ -39,6 +39,43 @@ OF {
 	}
 }
 
-TF : Tdef {}
+NF : Ndef {
 
-NF : Ndef {}
+	var <>pindex, <>cindex;
+
+	initialize {
+		if(pindex.isNil, { pindex = 1000 });
+		if(cindex.isNil, { cindex = 2000 });
+	}
+
+	transform {|process, index|
+		var i = index;
+
+		if(i.isNil, {
+			this.initialize();
+			pindex = pindex + 1;
+			i = pindex;
+		});
+
+		this[i] = \filter -> process;
+	}
+
+	control {|process, index|
+		var i = index;
+
+		if(i.isNil, {
+			this.initialize();
+			cindex = cindex + 1;
+			i = cindex;
+		});
+
+		this[i] = \pset -> process;
+	}
+
+	modulate {|param, process|
+		var local = ("modulate_" ++ this.key ++ "_" ++ param).asSymbol; local.postln;
+		^this.map(param, NF(local , process));
+	}
+}
+
+TF : Tdef {}
