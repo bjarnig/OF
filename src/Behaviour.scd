@@ -198,8 +198,9 @@ behaviour.stackprand = {|ev,nin,effects,pipeline,times=10,delay=3|
 	10.do{|i|
 		NF(nin)[10+i] = nil;
 	};
-    {
-		    times.do{|i|
+    
+	{
+		times.do{|i|
 
 			10.do{|i| NF(nin)[10+i] = nil };
 
@@ -217,13 +218,11 @@ behaviour.stackprand = {|ev,nin,effects,pipeline,times=10,delay=3|
 				0.01.wait;
 			};
 
-
 			effects = effects.scramble;
 			delay.wait;
+		};
 
-			};
-
-		}.fork;
+	}.fork;
 
 
 	NF(nin)
