@@ -48,19 +48,18 @@ NF : Ndef {
 	}
 
 	stack {|processes, pipeline|
-		
+
 		this.clearProcessSlots();
 
 		processes.do{|eff,i|
-			eff.postln;
 			this[pindex + i] = \filter -> pipeline.processing[eff].value();
 		}
 	}
 
 	stackd {|processes, pipeline, delFrom, delTo|
 
-		this.clearProcessSlots();	
-	
+		this.clearProcessSlots();
+
 		{
 			processes.do{|eff,i|
 				rrand(delFrom, delTo).wait;
@@ -73,13 +72,13 @@ NF : Ndef {
 	stackp {|processes,pipeline|
 
 		this.clearProcessSlots();
-		
+
 		{
 			processes.do{|eff,i|
 				var effect = eff[0], params = eff[1];
-				
+
 				this[pindex + i] = \filter -> pipeline.processing[effect].value();
-				
+
 				0.05.wait;
 
 				params.keys.do{|key|
@@ -95,7 +94,7 @@ NF : Ndef {
 
 		this.clearProcessSlots();
 
-		{ 
+		{
 			processes.do{|eff,i|
 				var effect = eff[0], delay = eff[1], params = eff[2];
 
@@ -118,7 +117,7 @@ NF : Ndef {
 
 				this.clearProcessSlots();
 
-				processes.do{|eff,count|
+				processes.do{|eff,i|
 					var effect = eff[0], params = eff[1];
 
 					this[pindex + i] = \filter -> pipeline.processing[effect].value();
@@ -135,13 +134,24 @@ NF : Ndef {
 				processes = processes.scramble;
 				delay.wait;
 			}
-		
+
 		}.fork
+	}
+}
+
+Pool {
+
+	var <>items;
+
+	*new {|input|
+		^super.newCopyArgs(input).init(input);
+    }
+
+	init {|in|
+		this.items = in;
 	}
 }
 
 TF : Tdef {}
 
 Pipeline : NF {}
-
-Pool {}

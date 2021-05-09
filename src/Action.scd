@@ -58,7 +58,7 @@ actions.drop = {|ev, name, freq=1000, delay=0.2, decay=0.4|
 	^NF(local)
 };
 
-actions.disturb = {|name, freq=1000, mod=28, delay=0.2, feedback = 0.9|
+actions.disturb = {|ev, name, freq=1000, mod=28, delay=0.2, feedback = 0.9|
 	var local = ("disturb_" ++ name).asSymbol;
 	var dur = rrand(20, 25);
 
@@ -84,7 +84,7 @@ actions.disturb = {|name, freq=1000, mod=28, delay=0.2, feedback = 0.9|
 	^NF(local)
 };
 
-actions.hinder = {|name,freq=2000|
+actions.hinder = {|ev, name,freq=2000|
 	var local = ("hinder_" ++ name).asSymbol;
 	var dur = rrand(11, 13);
 
@@ -107,7 +107,7 @@ actions.hinder = {|name,freq=2000|
 	^NF(local)
 };
 
-actions.cut = {|name, inFreq=100|
+actions.cut = {|ev, name, inFreq=100|
 	var local = ("cut_" ++ name).asSymbol;
 	var dur = rrand(9, 14);
 

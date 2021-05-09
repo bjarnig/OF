@@ -127,6 +127,22 @@ behaviour.mcloud = {|ev,nin,dur=2,times=4|
 	})
 };
 
+behaviour.switchx = {|ev,pool,dur=6|
+
+	{
+
+	pool.items.do {|pl|
+
+		pl.play;
+		rrand(dur,dur*2).wait;
+		o.action.iinterrupt(pl.key);
+        rrand(0.5,1.5).wait;
+	}
+
+	}.fork;
+
+};
+
 behaviour
 
 )

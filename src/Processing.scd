@@ -120,13 +120,15 @@ processing.waveloss = {|ev|
 
 processing.diffuse = {|ev|
 	{|in|
-		var verb = GVerb.ar( BBandStop.ar(x.ar, LFDNoise1.ar(3).range(500,2000)), 25, 5, damping:0.9 );
+		var verb = GVerb.ar( BBandStop.ar(in, LFDNoise1.ar(3).range(500,2000)), 25, 5, damping:0.9 );
 		XFade2.ar(in, verb, -0.75);
 	}
 };
 
 processing.append = {|ev, nf, name|
 	var local = ("append_" ++ name).asSymbol;
+	local.postln;
+	nf.postln;
 	NF(local, { nf.ar });
 	NF(local)[10] = \filter -> ev[name].value;
 	NF(local);

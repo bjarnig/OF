@@ -81,6 +81,6 @@ observers.adapt = {|ev, name=\adapt|
 
 };
 
-observers.adapt()
+observers;
 
 )

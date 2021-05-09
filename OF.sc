@@ -1,7 +1,7 @@
 OF {
 
 	var <>basePath = "/Users/bjarni/Library/Application Support/SuperCollider/Extensions/Dev/OF/src/";
-	var <>synthesis, <>processing, <>control, <>behaviour, <>action, <>waveform, <>st, <>pr, <>cn, <>bh, <>ac, <>wf;
+	var <>synthesis, <>processing, <>control, <>behaviour, <>action, <>observe, <>waveform, <>st, <>pr, <>cn, <>bh, <>ac, <>ob, <>wf;
 
 	*new {|interpreter|
 		^super.newCopyArgs().init(interpreter);
@@ -14,6 +14,7 @@ OF {
 		control = interpreter.compileFile(basePath ++ "Control.scd").value;
 		behaviour = interpreter.compileFile(basePath ++ "Behaviour.scd").value;
 		action = interpreter.compileFile(basePath ++ "Action.scd").value;
+		observe = interpreter.compileFile(basePath ++ "Observe.scd").value;
 		waveform = interpreter.compileFile(basePath ++ "Waveform.scd").value;
 
 		st = interpreter.compileFile(basePath ++ "Synthesis.scd").value;
@@ -21,6 +22,7 @@ OF {
 		cn = interpreter.compileFile(basePath ++ "Control.scd").value;
 		bh = interpreter.compileFile(basePath ++ "Behaviour.scd").value;
 		ac = interpreter.compileFile(basePath ++ "Action.scd").value;
+		ob = interpreter.compileFile(basePath ++ "Observe.scd").value;
 		wf = interpreter.compileFile(basePath ++ "Waveform.scd").value;
 
 		^this
