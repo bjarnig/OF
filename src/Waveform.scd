@@ -116,6 +116,17 @@ waveform.opca = {|ev, name=\opca, size=5, from=1, to=25|
 	};
 };
 
+waveform.amplin = {|ev, name=\amplin, size=4, from=2, to=5|
+	NF(name)[0] = {|sdm=0.15,modFreq=3, modFrom=1, modTo=25, amp=1.0|
+		var sd = SampleDur.ir * sdm, mf =0.4;
+
+		HPF.ar(DemandEnvGen.ar(
+			Dseq([Dseq([1.0,-1.0],32), Dseries(-0.1,0.1,20), Dseries(-0.1,0.025,80), Drand([-0.5,0.5,1.0,-1.0],18) ], inf),
+			Drand(Array.geom(size,from,to), inf) * sd
+		),400).mod(SinOsc.ar(LFNoise0.ar(modFreq).range(modFrom, modTo))) * mf * amp;
+	};
+};
+
 waveform.moch = {|ev, name=\moch, size=13, from=10, to=35|
 	NF(name)[0] = {|filtSpeed=20, filtCenter=1000, sdm=1, filtBw=3, repeats=150, amp=1.0, modFreq = 1, modFrom = 1, modTo = 8|
 		var sd = SampleDur.ir * sdm;
