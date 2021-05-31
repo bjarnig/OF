@@ -123,7 +123,7 @@ waveform.amplin = {|ev, name=\amplin, size=4, from=2, to=5|
 		HPF.ar(DemandEnvGen.ar(
 			Dseq([Dseq([1.0,-1.0],32), Dseries(-0.1,0.1,20), Dseries(-0.1,0.025,80), Drand([-0.5,0.5,1.0,-1.0],18) ], inf),
 			Drand(Array.geom(size,from,to), inf) * sd
-		),400).mod(SinOsc.ar(LFNoise0.ar(modFreq).range(modFrom, modTo))) * mf * amp;
+		),400).mod(SinOsc.ar(LFNoise0.ar([modFreq,modFreq*0.75]).range(modFrom, modTo))) * mf * amp;
 	};
 };
 
@@ -150,17 +150,15 @@ waveform.moch = {|ev, name=\moch, size=13, from=10, to=35|
 	}
 };
 
-waveform.dramp = {|ev, name=\dramp, size=3, from=1, to=25|
-	NF(\name)[0] = {|filtSpeed=10, filtCenter=200, sdm=1, filtBw=3, amp=1.0, modFreq = 20, modFrom = 1, modTo = 8, lpf=2500|
-		var a = 9, b = 5, min=0.1, max=0.3, mf = 0.45;
+waveform.dramp = {|ev, name=\dramp, size=3, from=1, to=25, a = 9, b = 5, min=0.1, max=0.3|
+	NF(name)[0] = {|filtSpeed=10, filtCenter=200, sdm=1, modFreq=0.01, filtBw=3, amp=1.0, lpf=2500|
 		var sd = SampleDur.ir * sdm;
 		var snd = DemandEnvGen.ar(
 			Dseq([min, min.neg, [max.neg, max]], inf),
 			Dwhite(sd * a, sd * b),
-		).wrap2(SinOsc.ar([0.01, 0.012])) * 0.2;
-		snd = LPF.ar(snd, lpf);
-		snd = snd.mod(LFNoise0.ar(LFNoise0.ar(modFreq).range(modFrom, modTo))) * amp * mf;
-		HPF.ar(BBandStop.ar(snd, Lag.ar(LFNoise1.ar( [filtSpeed,filtSpeed*2]).range(filtCenter * 0.2, filtCenter * 2), 0.05), filtBw));
+		).wrap2(SinOsc.ar([modFreq, modFreq * 1.1])) * 0.2;
+		snd = SoftClipAmp8.ar(snd,10) * amp;
+		HPF.ar(BBandStop.ar(snd, Lag.ar(LFNoise1.ar( [filtSpeed,filtSpeed*2] ).range(filtCenter * 0.2, filtCenter * 2), 0.05), filtBw));
 	}
 };
 

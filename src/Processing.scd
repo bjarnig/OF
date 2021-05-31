@@ -160,18 +160,18 @@ processing.ampdrift = {|ev,dur=5|
 	var lffreq=10;
 	var min = 0.0;
 	var max = 1.3;
-	var freq = Tartini.kr(in)[0][0].linlin(0,20000, 1,15); freq;
+	var freq = Tartini.kr(in)[0][0].linlin(0,20000, 1,15);
 	in * EnvGen.ar( Env([min, max * 0.5, max, max, min], [0.1,2,2,1].normalizeSum * dur, [5,4,-4,-5] ).circle )
 	* LFDNoise3.ar(freq).range(min,max)
 	}
 };
 
-processing.pulsecross = {|ev|
+processing.pulsecross = {|ev,base=200|
 	{|in|
-	var freq= Pitch.kr(in)[0][0].max(100).min(18000);
+	var freq = Tartini.kr(in)[0][0].linlin(0,20000, 1, 10);
 	var osc, verb, thres, sig;
 	thres = Lag.kr(Amplitude.kr(in), 0.1);
-	sig = Splay.ar(Pulse.ar(Array.series(10, 1, 5) * freq * 0.25 )) * thres;
+	sig = Splay.ar(Pulse.ar(Array.series(10, 200, 20) * Lag.kr(freq, 2.0) )) * thres;
 	XFade2.ar(in,sig, 0.5)
 }
 };
@@ -186,7 +186,7 @@ processing.feedfold = {|ev|
 	{|in|
 	var feedback=0.6, delay=0.2, shiftFreq=200, shiftDens=0.1;
 	var effect;
-	effect = sig + LocalIn.ar(2);
+	effect = in + LocalIn.ar(2);
 	effect = effect.fold2(SinOsc.ar( LFNoise2.ar(0.1).range(10,20) ));
 	effect = DelayC.ar(effect, delay, SinOsc.ar(0.001).range(0.1,0.202));
 	LocalOut.ar(effect * feedback);
