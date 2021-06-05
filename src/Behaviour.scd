@@ -14,40 +14,40 @@ behaviour.run = {|ev, ndef|
 
 behaviour.mfb = {|ev, nin|
 
-var name = ("mfb\_" ++ name).asSymbol;
+	var name = ("mfb\_" ++ name).asSymbol;
 
-NF(name,
-{| feedback=0.998, delay=0.08, shiftFreq=10, shiftMod=20, shiftLpf=18000, amp=1.0|
-var sig, input, first, second, shiftSnd, combined;
+	NF(name,
+	{| feedback=0.998, delay=0.08, shiftFreq=10, shiftMod=20, shiftLpf=18000, amp=1.0|
+		var sig, input, first, second, shiftSnd, combined;
 
-    // Ndef to process
-    sig = nin.ar;
+		// Ndef to process
+		sig = nin.ar;
 
-    // local in, 4 channels
-    input = sig + LocalIn.ar(4);
+		// local in, 4 channels
+		input = sig + LocalIn.ar(4);
 
-    // 1 - 2
-    first = input.clump(2)[0];
-    first = FreqShift.ar(first, LFNoise1.ar(shiftMod*0.5).range(shiftFreq,shiftFreq*3));
+		// 1 - 2
+		first = input.clump(2)[0];
+		first = FreqShift.ar(first, LFNoise1.ar(shiftMod*0.5).range(shiftFreq,shiftFreq*3));
 
-    shiftSnd = LPF.ar(FreqShift.ar(first, LFNoise1.ar(shiftMod).range(shiftFreq,shiftFreq*4)),shiftLpf);
+		shiftSnd = LPF.ar(FreqShift.ar(first, LFNoise1.ar(shiftMod).range(shiftFreq,shiftFreq*4)),shiftLpf);
 
-    // 3 -4
-    second = input.clump(2)[1];
-    second = MostChange.ar(first, shiftSnd);
+		// 3 -4
+		second = input.clump(2)[1];
+		second = MostChange.ar(first, shiftSnd);
 
-    // delay it
-    first = DelayC.ar(first, 1, LFNoise1.ar(0.1).range(delay*0.5,delay*1.3));
-    second = DelayC.ar(second, 1, LFNoise1.ar(0.1).range(delay,delay*1.4));
+		// delay it
+		first = DelayC.ar(first, 1, LFNoise1.ar(0.1).range(delay*0.5,delay*1.3));
+		second = DelayC.ar(second, 1, LFNoise1.ar(0.1).range(delay,delay*1.4));
 
-    combined = (first ++ second) * 0.6;
+		combined = (first ++ second) * 0.6;
 
-    // local out
-    LocalOut.ar(combined * feedback);
+		// local out
+		LocalOut.ar(combined * feedback);
 
-    CombC.ar( Limiter.ar( Splay.ar( combined ), 0.9 * amp), 0.1, 0.1, 0.2)
+		CombC.ar( Limiter.ar( Splay.ar( combined ), 0.9 * amp), 0.1, 0.1, 0.2)
 
-}).play
+	}).play
 
 };
 
@@ -131,7 +131,6 @@ behaviour.mcloud = {|ev,nin,dur=2,times=4|
 behaviour.switchx = {|ev,pool,dur=6|
 
     {
-
 		pool.items.do {|pl|
 
 			pl.play;
@@ -139,9 +138,7 @@ behaviour.switchx = {|ev,pool,dur=6|
 			o.action.iinterrupt(pl.key);
 			rrand(0.5,1.5).wait;
 		}
-
-    }.fork;
-
+    }.fork
 };
 
 behaviour.overlap = {|ev,nodes,dur=8,overlap=2,next=7,amp=0.75|
@@ -187,16 +184,16 @@ behaviour.shadow = {|ev,nodes,dur=8,overlap=2,next=6,amp=1.0,factor=0.5|
     	}
 
     }.fork
-
 };
 
-behaviour.brpb = {|ev, node, durFrom=2, durTo=4, filtFrom=100, filtTo=4000, bw=6, res=0.1, bramp=1.0, bpamp=1.0, cb|
+behaviour.brpb = {|ev, nodes, durFrom=2, durTo=4, filtFrom=100, filtTo=4000, bw=6, res=0.1, bramp=1.0, bpamp=1.0, cb|
 
-    var nbr = ("brjct1"+node.key).asSymbol;
-    var nbp = ("brjct2"+node.key).asSymbol;
+	var nbr = ("brjct1").asSymbol;
+	var nbp = ("brjct2").asSymbol;
 
     {
-    	inf.do {
+    	nodes.do {|node|
+
     		Ndef(nbr, { BBandStop.ar(node.ar, rrand(filtFrom,filtTo), bw, bramp ) }).play;
     		Ndef(nbp, { BBandPass.ar(node.ar, rrand(filtFrom,filtTo), res, bpamp ) }).play;
     		rrand(durFrom,durTo).wait;
@@ -204,7 +201,8 @@ behaviour.brpb = {|ev, node, durFrom=2, durTo=4, filtFrom=100, filtTo=4000, bw=6
 
     	Ndef(nbr).stop;
     	Ndef(nbp).stop;
-    	cb.();
+
+		if(cb.notNil, { cb.() })
 
     }.fork;
 
@@ -221,22 +219,18 @@ behaviour.lfswitch = {|ev,nodes, freq, from, to, emitter|
 
 behaviour.fspread = {|ev, nodes, range=10000, base=100, mult=10, bw=0.5, delFrom=1, delTo=2|
 
-var amount = range / nodes.size;
+	var amount = range / nodes.size;
 
-{
+	{
+		nodes.do {|node,i|
+			Ndef(("fspread" ++ node.key).asSymbol, {
+				var snd = BBandPass.ar(node.ar, base + ( amount * i ), bw);
+				snd * (mult / nodes.size)
+			}).play;
 
-nodes.do {|node,i|
-	Ndef(("fspread" ++ node.key).asSymbol, {
-		var snd = BBandPass.ar(node.ar, base + ( amount * i ), bw);
-		snd * (mult / nodes.size)
-	}).play;
-
-	rrand(delFrom,delTo).wait;
-
-};
-
-}.fork;
-
+			rrand(delFrom,delTo).wait
+		}
+	}.fork
 };
 
 behaviour.selectx = {|ev, nodes, freq, from, to, emitter|

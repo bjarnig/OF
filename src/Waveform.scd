@@ -1,9 +1,9 @@
 
 /*
 
-  ---- ---- ---- ---- Pipeline 'Waveform' ---- ---- ---- ----
+  ---- ---- ---- ---- OF 'Waveform' ---- ---- ---- ----
 
-	an Event() that containts Ns responsible for waveforms
+	an Event() that containts NFs responsible for waveforms
 
 */
 

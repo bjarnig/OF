@@ -1,9 +1,9 @@
 
 /*
 
-  ---- ---- ---- ---- Pipeline 'Synthesis' ---- ---- ---- ----
+  ---- ---- ---- ---- OF 'Synthesis' ---- ---- ---- ----
 
-	 an Event() that containts Ns responsible for synthesis
+	an Event() that containts NFs responsible for synthesis
 
 */
 

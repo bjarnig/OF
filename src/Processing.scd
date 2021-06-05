@@ -1,9 +1,9 @@
 
 /*
 
-  ---- ---- ---- ---- Pipeline 'Processing' ---- ---- ---- ----
+  ---- ---- ---- ---- OF 'Processing' ---- ---- ---- ----
 
-   an Event() that containts Ndefs responsible for processing.
+	an Event() that containts NFs responsible for processing.
 
 */
 

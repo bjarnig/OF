@@ -1,7 +1,7 @@
 
 /*
 
-  ---- ---- ---- ---- Pipeline 'Control' ---- ---- ---- ----
+  ---- ---- ---- ---- OF 'Control' ---- ---- ---- ----
 
 	an Event() that containts patterns for control.
 

@@ -1,7 +1,9 @@
 
 /*
 
-  ---- ---- ---- ---- Pipeline 'Observers' ---- ---- ---- ----
+  ---- ---- ---- ---- OF 'Observers' ---- ---- ---- ----
+
+		an Event() that containts attached observers.
 
 */
 

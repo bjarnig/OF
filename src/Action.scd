@@ -1,9 +1,9 @@
 
 /*
 
-  ---- ---- ---- ---- Pipeline 'Actions' ---- ---- ---- ----
+  ---- ---- ---- ---- OF 'Actions' ---- ---- ---- ----
 
-			direct influences of an N through actions
+		direct influences of NFs through actions
 
 */
 
