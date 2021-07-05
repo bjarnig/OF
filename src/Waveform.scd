@@ -14,7 +14,7 @@ var waveform = ();
 waveform.specs = Dictionary();
 
 waveform.andin = {|ev, name=\andin|
-	NF(name)[0] = {|mod=0.005, from=9, to=12, sdm=1, min=0.1, max=0.3, amp=1|
+	NF(name)[0] = {|sdm=1, mod=0.005, from=9, to=12, min=0.1, max=0.3, amp=1|
 		var sd = SampleDur.ir * sdm, hpf=40, mf=1.0;
 
 		HPF.ar(

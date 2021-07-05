@@ -1,10 +1,19 @@
 NF : Ndef {
 
-	var <>pindex, <>cindex;
+	var <>pindex, <>cindex; 
 
 	initialize {
 		if(pindex.isNil, { pindex = 1000 });
 		if(cindex.isNil, { cindex = 2000 });
+	}
+
+	clearProcessSlots {
+		pindex = 1000;
+		(this.pindex - 1000).do{|i| this[this.pindex+i] = nil }
+	}
+
+	clearOrInit {|clear=true|
+		if(clear == true, { this.clearProcessSlots() }, { this.initialize() });
 	}
 
 	transform {|process, index|
@@ -31,54 +40,45 @@ NF : Ndef {
 		this[i] = \pset -> process;
 	}
 
-	clearProcessSlots {
-		var n = 0;
-
-		this.initialize();
-		this.pindex - 1000;
-
-		n.do{|i|
-			this[1000+i] = nil;
-		}
-	}
-
 	modulate {|param, process|
 		var local = ("modulate_" ++ this.key ++ "_" ++ param).asSymbol; local.postln;
 		^this.map(param, NF(local , process));
 	}
 
-	stack {|processes, pipeline|
+	stack {|processes, lib, clear=true|
 
-		this.clearProcessSlots();
+		this.clearOrInit(clear);
 
 		processes.do{|eff,i|
-			this[pindex + i] = \filter -> pipeline.processing[eff].value();
+			pindex = pindex + i;
+			this[pindex] = \filter -> lib.processing[eff].value();
 		}
 	}
 
-	stackd {|processes, pipeline, delFrom, delTo|
+	stackd {|processes, lib, delFrom=0.0, delTo=1.0, clear=true|
 
-		this.clearProcessSlots();
+		this.clearOrInit(clear);
 
 		{
 			processes.do{|eff,i|
 				rrand(delFrom, delTo).wait;
-				this[pindex + i] = \filter -> pipeline.processing[eff].value();
+				pindex = pindex + i;
+				this[pindex] = \filter -> lib.processing[eff].value();
 			}
 
 		}.fork
 	}
 
-	stackp {|processes,pipeline|
+	stackp {|processes, lib, clear=true|
 
-		this.clearProcessSlots();
+		this.clearOrInit(clear);
 
 		{
 			processes.do{|eff,i|
 				var effect = eff[0], params = eff[1];
-
-				this[pindex + i] = \filter -> pipeline.processing[effect].value();
-
+				
+				pindex = pindex + i;
+				this[pindex] = \filter -> lib.processing[effect].value();
 				0.05.wait;
 
 				params.keys.do{|key|
@@ -90,16 +90,15 @@ NF : Ndef {
 		}.fork
 	}
 
-	stackpd {|processes,pipeline|
+	stackpd {|processes, lib, clear=true|
 
-		this.clearProcessSlots();
+		this.clearOrInit(clear);
 
 		{
 			processes.do{|eff,i|
 				var effect = eff[0], delay = eff[1], params = eff[2];
-
-				this[pindex + i] = \filter -> pipeline.processing[effect].value();
-
+				pindex = pindex + i;
+				this[pindex] = \filter -> lib.processing[effect].value();
 				0.05.wait;
 
 				params.keys.do{|key|
@@ -111,17 +110,16 @@ NF : Ndef {
 		}.fork
 	}
 
-	stackprand {|processes,pipeline,times=10,delay=3|
+	stackprand {|processes,lib,times=10,delay=3,clear=true|
+		
+		this.clearOrInit(clear);
+		
 		{
 			times.do{|i|
 
-				this.clearProcessSlots();
-
 				processes.do{|eff,i|
 					var effect = eff[0], params = eff[1];
-
-					this[pindex + i] = \filter -> pipeline.processing[effect].value();
-
+					this[pindex + i] = \filter -> lib.processing[effect].value();
 					0.05.wait;
 
 					params.keys.do{|key|
@@ -153,5 +151,4 @@ Pool {
 }
 
 TF : Tdef {}
-
 Pipeline : NF {}

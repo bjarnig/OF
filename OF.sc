@@ -39,4 +39,8 @@ OF {
 	waveformNames {
 		^this.waveform.keys.asArray
 	}
+
+	processingNames {
+		^this.processing.keys.asArray
+	}
 }
