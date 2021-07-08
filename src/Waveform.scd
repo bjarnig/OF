@@ -204,7 +204,7 @@ waveform.specs[\dramp][\filtBw] = ControlSpec(0.1,9,'lin');
 waveform.specs[\dramp][\lpf] = ControlSpec(40,18000,'lin');
 
 waveform.costa = {|ev, name=\costa|
-	NF(name)[0] = {|amp=1.0,mod=20,freq=20,lop=200| LeastChange.ar(SinOsc.ar(mod), Nanite.ar([freq,freq*0.5], lop:lop)) * amp };
+	NF(name)[0] = {|amp=1.0,mod=20,freq=20,lop=200| LeastChange.ar(SinOsc.ar(mod), OFNanite.ar([freq,freq*0.5], lop:lop)) * amp };
 };
 
 waveform.specs[\costa] = Dictionary();
