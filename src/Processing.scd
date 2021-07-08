@@ -103,21 +103,27 @@ processing.dualdist = {|ev|
 };
 
 processing.amclip = {|ev|
-	{|in,afreq=100| in.amclip(Saw.ar(afreq))}
+	{|in,afreq=100| 
+		in.amclip(Saw.ar(afreq))
+	}
 };
 
 processing.wloss = {|ev|
-	{|in,drop=30,outoff=40,mode=2| WaveLoss.ar(in,drop,outoff,mode) }
+	{|in,drop=30,outoff=40,mode=2| 
+		WaveLoss.ar(in,drop,outoff,mode) 
+	}
 };
 
 processing.bfold = {|ev|
-	{|in,bffreq=24,bfstop=500,bfbw=6| HPF.ar(BBandStop.ar( in.fold2(SinOsc.ar( [bffreq*1.05,bffreq])),bfstop,bfbw),rrand(40,60)) * 4;  }
+	{|in,bffreq=24,bfstop=500,bfbw=6| 
+		HPF.ar(BBandStop.ar( in.fold2(SinOsc.ar( [bffreq*1.05,bffreq])),bfstop,bfbw),rrand(40,60)) * 4;  
+	}
 };
 
 processing.xloss = {|ev|
 	{|in|
-	var sh = Amplitude.ar(in*2, 0.001).linlin(0,1,10,18);
-	WaveLoss.ar(in, LFDNoise3.ar( SinOsc.ar(0.1).range(2,4) ).range(sh*0.5,sh), 25)
+		var sh = Amplitude.ar(in*2, 0.001).linlin(0,1,10,18);
+		WaveLoss.ar(in, LFDNoise3.ar( SinOsc.ar(0.1).range(2,4) ).range(sh*0.5,sh), 25)
 	}
 };
 
@@ -130,9 +136,9 @@ processing.diffuse = {|ev|
 
 processing.lfdnamp = {|ev|
 	{|in|
-	var amp = Amplitude.ar(in).range(4, SinOsc.ar(0.1).range(10,20));
-	var sig = in * LFDNoise3.ar(amp).range(0.1,1.2);
-	sig.distort + PitchShift.ar(sig, 0.02, 0.8)
+		var amp = Amplitude.ar(in).range(4, SinOsc.ar(0.1).range(10,20));
+		var sig = in * LFDNoise3.ar(amp).range(0.1,1.2);
+		sig.distort + PitchShift.ar(sig, 0.02, 0.8)
 	}
 };
 
@@ -157,59 +163,109 @@ processing.rmsfold = {|ev|
 
 processing.ampdrift = {|ev,dur=5|
 	{|in|
-	var lffreq=10;
-	var min = 0.0;
-	var max = 1.3;
-	var freq = Tartini.kr(in)[0][0].linlin(0,20000, 1,15);
-	in * EnvGen.ar( Env([min, max * 0.5, max, max, min], [0.1,2,2,1].normalizeSum * dur, [5,4,-4,-5] ).circle )
-	* LFDNoise3.ar(freq).range(min,max)
+		var lffreq=10;
+		var min = 0.0;
+		var max = 1.3;
+		var freq = Tartini.kr(in)[0][0].linlin(0,20000, 1,15);
+		in * EnvGen.ar( Env([min, max * 0.5, max, max, min], [0.1,2,2,1].normalizeSum * dur, [5,4,-4,-5] ).circle )
+		* LFDNoise3.ar(freq).range(min,max)
 	}
 };
 
 processing.pulsecross = {|ev,base=200|
 	{|in|
-	var freq = Tartini.kr(in)[0][0].linlin(0,20000, 1, 10);
-	var osc, verb, thres, sig;
-	thres = Lag.kr(Amplitude.kr(in), 0.1);
-	sig = Splay.ar(Pulse.ar(Array.series(10, 200, 20) * Lag.kr(freq, 2.0) )) * thres;
-	XFade2.ar(in,sig, 0.5)
+		var freq = Tartini.kr(in)[0][0].linlin(0,20000, 1, 10);
+		var osc, verb, thres, sig;
+		thres = Lag.kr(Amplitude.kr(in), 0.1);
+		sig = Splay.ar(Pulse.ar(Array.series(10, 200, 20) * Lag.kr(freq, 2.0) )) * thres;
+		XFade2.ar(in,sig, 0.5)
 }
 };
 
 processing.mostchanged = {|ev|
 	{|in|
-	MostChange.ar(in, SinOsc.ar(ZeroCrossing.ar(in) * 0.5) ) * 0.5
+		MostChange.ar(in, SinOsc.ar(ZeroCrossing.ar(in) * 0.5) ) * 0.5
 	}
 };
 
 processing.feedfold = {|ev|
 	{|in|
-	var feedback=0.6, delay=0.2, shiftFreq=200, shiftDens=0.1;
-	var effect;
-	effect = in + LocalIn.ar(2);
-	effect = effect.fold2(SinOsc.ar( LFNoise2.ar(0.1).range(10,20) ));
-	effect = DelayC.ar(effect, delay, SinOsc.ar(0.001).range(0.1,0.202));
-	LocalOut.ar(effect * feedback);
-	effect
+		var feedback=0.6, delay=0.2, shiftFreq=200, shiftDens=0.1;
+		var effect;
+		effect = in + LocalIn.ar(2);
+		effect = effect.fold2(SinOsc.ar( LFNoise2.ar(0.1).range(10,20) ));
+		effect = DelayC.ar(effect, delay, SinOsc.ar(0.001).range(0.1,0.202));
+		LocalOut.ar(effect * feedback);
+		effect
 	}
 };
 
-/*
-
-
-
-processing.xxx = {|ev|
+processing.gravch = {|ev|
 	{|in|
-
+		var freq = Tartini.kr(in)[0][0].linlin(0,20000, 100,1500);
+		LPF.ar(LeastChange.ar(GravityGrid.ar(0, [freq * 0.25, freq* 0.5] ), in), (freq * 50).min(15000), 0.4);
 	}
 };
 
-processing.xxx = {|ev|
+processing.vesica = {|ev|
 	{|in|
-
+		var mod = LFNoise1.kr(0.01);
+		Fold.ar(in, Vesica.ar(mod.range(0.5,2), 0.2), Vesica.ar(mod.range(5,15), 0.2) * 3)
 	}
 };
-*/
+
+processing.ghole = {|ev|
+	{|in|
+		var mod = LFNoise1.kr(0.1);
+		Greyhole.ar(FreqShift.ar(in, 0.1, Lag.kr(mod.range(100,1000), 4)), 0.8, 0.6, mod.range(5,10), 0.1, 0.8, 0.4, 0.5)
+	}
+};
+
+processing.bbstop = {|ev|
+	{|in|
+		BBandStop.ar(in.round(0.1), LFNoise1.ar(0.3).exprange(100, 8000), 6) * 1.5;
+	}
+};
+
+processing.dfmf = {|ev|
+	{|in|
+		var chain = FFT(LocalBuf(2048), in);
+		var centroid = SpecCentroid.kr(chain) * LFNoise1.kr(0.5).exprange(0.001,0.2);
+		in = in.thresh(SinOsc.ar(centroid * 0.08));
+		DFM1.ar(in,LFDNoise1.ar(centroid * 0.05).range(50,8000),SinOsc.kr(centroid * 0.05).range(0.82,0.9),1,0,0.005,0.7);
+	}
+};
+
+processing.bcomb = {|ev|
+	{|in|
+		var mod = LFNoise1.ar([1, 1.1, 1.2, 1.3] * 3);
+		var snd = BBandStop.ar(in, mod.exprange(100, 1000), mod.exprange(2, 4));
+		Splay.ar( CombC.ar(snd, 0.2, Lag.kr(Amplitude.kr(in), 3).range(0.2,0.8), 2))
+	}
+};
+
+processing.cubmod = {|ev|
+	{|in|
+		var trig, seq, freq;
+		trig = Impulse.kr(5);
+	    seq = Diwhite(Rand(0.1,2), Rand(10,30), inf).midicps;
+		freq = Demand.kr(trig, 0, seq);
+		LFCub.kr([freq, freq/4], 0, 0.5, 0.9) * in
+	}
+};
+
+processing.lfddel = {|ev|
+	{|in|
+		var feedback=0.5, delay=0.2, shiftFreq=200, shiftDens=0.1;
+		var effect;
+		var mod = LFNoise2.ar(0.1);
+		effect = in + LocalIn.ar(2);
+		effect = effect * LFDNoise1.ar(mod.range(1,10)).range(0.5,1.0);
+		effect = DelayC.ar(effect, delay, mod.range(0.1, 0.302));
+		LocalOut.ar(effect * feedback);
+		effect
+	}
+};
 
 // Utilities //
 

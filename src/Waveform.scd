@@ -80,7 +80,7 @@ waveform.specs[\serin][\start] = ControlSpec(1,64,'lin');
 waveform.specs[\serin][\from] = ControlSpec(1,20,'lin');
 waveform.specs[\serin][\to] = ControlSpec(1,20,'lin');
 
-waveform.leaf = {|ev, name=\greet, length=30|
+waveform.leaf = {|ev, name=\leaf, length=30|
 	NF(name)[0] = {|sdm=1, repeats=4, from=5, to=18, mod=60, amp=1.0|
 		var sd = SampleDur.ir * sdm, mf=0.3;
 
@@ -94,6 +94,13 @@ waveform.leaf = {|ev, name=\greet, length=30|
 	}
 };
 
+waveform.specs[\serin] = Dictionary();
+waveform.specs[\serin][\sdm] = ControlSpec(0.001,10,'lin');
+waveform.specs[\serin][\repeats] = ControlSpec(1,16,'lin');
+waveform.specs[\serin][\from] = ControlSpec(1,20,'lin');
+waveform.specs[\serin][\to] = ControlSpec(1,20,'lin');
+waveform.specs[\serin][\mod] = ControlSpec(1,64,'lin');
+
 waveform.foral = {|ev, name=\foral|
 	NF(name)[0] = {|ser=500,step=2.5,amp=1.0,sdm=0.5|
 		var sd = SampleDur.ir * sdm, mf = 0.008;
@@ -104,6 +111,11 @@ waveform.foral = {|ev, name=\foral|
 		) * amp
 	}
 };
+
+waveform.specs[\foral] = Dictionary();
+waveform.specs[\foral][\ser] = ControlSpec(100,1000,'lin');
+waveform.specs[\foral][\step] = ControlSpec(1.0,8.0,'lin');
+waveform.specs[\foral][\sdm] = ControlSpec(0.001,10,'lin');
 
 waveform.opca = {|ev, name=\opca, size=5, from=1, to=25|
 	NF(name)[0] = {|sdm=0.15,modFreq=10, modFrom=5, modTo=25, amp=1.0|
@@ -116,6 +128,12 @@ waveform.opca = {|ev, name=\opca, size=5, from=1, to=25|
 	};
 };
 
+waveform.specs[\opca] = Dictionary();
+waveform.specs[\opca][\sdm] = ControlSpec(0.001,10,'lin');
+waveform.specs[\opca][\modFreq] = ControlSpec(0.01,30,'lin');
+waveform.specs[\opca][\modFrom] = ControlSpec(1,20,'lin');
+waveform.specs[\opca][\modTo] = ControlSpec(1,20,'lin');
+
 waveform.amplin = {|ev, name=\amplin, size=4, from=2, to=5|
 	NF(name)[0] = {|sdm=0.15,modFreq=3, modFrom=1, modTo=25, amp=1.0|
 		var sd = SampleDur.ir * sdm, mf =0.4;
@@ -127,8 +145,14 @@ waveform.amplin = {|ev, name=\amplin, size=4, from=2, to=5|
 	};
 };
 
+waveform.specs[\amplin] = Dictionary();
+waveform.specs[\amplin][\sdm] = ControlSpec(0.01,10,'lin');
+waveform.specs[\amplin][\modFreq] = ControlSpec(0.01,30,'lin');
+waveform.specs[\amplin][\modFrom] = ControlSpec(1,20,'lin');
+waveform.specs[\amplin][\modTo] = ControlSpec(1,20,'lin');
+
 waveform.moch = {|ev, name=\moch, size=13, from=10, to=35|
-	NF(name)[0] = {|filtSpeed=20, filtCenter=1000, sdm=1, filtBw=3, repeats=150, amp=1.0, modFreq = 1, modFrom = 1, modTo = 8|
+	NF(name)[0] = {|filtSpeed=20, filtCenter=1000, sdm=1, filtBw=3, repeats=150, amp=1.0, modFreq=1, modFrom=1, modTo=8|
 		var sd = SampleDur.ir * sdm;
 		var mf = 0.6;
 		var snd = DemandEnvGen.ar(
@@ -150,6 +174,16 @@ waveform.moch = {|ev, name=\moch, size=13, from=10, to=35|
 	}
 };
 
+waveform.specs[\moch] = Dictionary();
+waveform.specs[\moch][\filtSpeed] = ControlSpec(0.01,30,'lin');
+waveform.specs[\moch][\filtCenter] = ControlSpec(60,4000,'lin');
+waveform.specs[\moch][\sdm] = ControlSpec(0.01,10,'lin');
+waveform.specs[\moch][\filtBw] = ControlSpec(0.1,9,'lin');
+waveform.specs[\moch][\repeats] = ControlSpec(1,500,'lin');
+waveform.specs[\moch][\modFreq] = ControlSpec(0.01,30,'lin');
+waveform.specs[\moch][\modFrom] = ControlSpec(1,20,'lin');
+waveform.specs[\moch][\modTo] = ControlSpec(1,20,'lin');
+
 waveform.dramp = {|ev, name=\dramp, size=3, from=1, to=25, a = 9, b = 5, min=0.1, max=0.3|
 	NF(name)[0] = {|filtSpeed=10, filtCenter=200, sdm=1, modFreq=0.01, filtBw=3, amp=1.0, lpf=2500|
 		var sd = SampleDur.ir * sdm;
@@ -161,6 +195,13 @@ waveform.dramp = {|ev, name=\dramp, size=3, from=1, to=25, a = 9, b = 5, min=0.1
 		HPF.ar(BBandStop.ar(snd, Lag.ar(LFNoise1.ar( [filtSpeed,filtSpeed*2] ).range(filtCenter * 0.2, filtCenter * 2), 0.05), filtBw));
 	}
 };
+
+waveform.specs[\dramp] = Dictionary();
+waveform.specs[\dramp][\filtSpeed] = ControlSpec(0.01,30,'lin');
+waveform.specs[\dramp][\filtCenter] = ControlSpec(60,4000,'lin');
+waveform.specs[\dramp][\sdm] = ControlSpec(0.01,10,'lin');
+waveform.specs[\dramp][\filtBw] = ControlSpec(0.1,9,'lin');
+waveform.specs[\dramp][\lpf] = ControlSpec(40,18000,'lin');
 
 waveform.costa = {|ev, name=\costa|
 	NF(name)[0] = {|amp=1.0,mod=20,freq=20,lop=200| LeastChange.ar(SinOsc.ar(mod), Nanite.ar([freq,freq*0.5], lop:lop)) * amp };
