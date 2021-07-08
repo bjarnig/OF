@@ -1,6 +1,6 @@
 NF : Ndef {
 
-	var <>pindex, <>cindex; 
+	var <>pindex, <>cindex;
 
 	initialize {
 		if(pindex.isNil, { pindex = 1000 });
@@ -9,7 +9,7 @@ NF : Ndef {
 
 	clearProcessSlots {
 		pindex = 1000;
-		(this.pindex - 1000).do{|i| this[this.pindex+i] = nil }
+		(this.pindex - 1000).do{|i| this[this.pindex+i] = nil; }
 	}
 
 	clearOrInit {|clear=true|
@@ -76,7 +76,7 @@ NF : Ndef {
 		{
 			processes.do{|eff,i|
 				var effect = eff[0], params = eff[1];
-				
+
 				pindex = pindex + i;
 				this[pindex] = \filter -> lib.processing[effect].value();
 				0.05.wait;
@@ -111,14 +111,15 @@ NF : Ndef {
 	}
 
 	stackprand {|processes,lib,times=10,delay=3,clear=true|
-		
+
 		this.clearOrInit(clear);
-		
+
 		{
 			times.do{|i|
 
 				processes.do{|eff,i|
 					var effect = eff[0], params = eff[1];
+					pindex = pindex + 1;
 					this[pindex + i] = \filter -> lib.processing[effect].value();
 					0.05.wait;
 

@@ -1,13 +1,14 @@
 OF {
 
-	var <>basePath = "/Users/bjarni/Library/Application Support/SuperCollider/Extensions/Dev/OF/src/";
-	var <>synthesis, <>processing, <>control, <>behaviour, <>action, <>observe, <>waveform, <>st, <>pr, <>cn, <>bh, <>ac, <>ob, <>wf;
+	var <>basePath, <>synthesis, <>processing, <>control, <>behaviour, <>action, <>observe, <>waveform, <>st, <>pr, <>cn, <>bh, <>ac, <>ob, <>wf;
 
 	*new {|interpreter|
 		^super.newCopyArgs().init(interpreter);
 	}
 
 	init {|interpreter|
+
+		basePath = (Platform.userExtensionDir ++ "/downloaded-quarks/OF/src/").replace("Extensions/", "");
 
 		synthesis = interpreter.compileFile(basePath ++ "Synthesis.scd").value;
 		processing = interpreter.compileFile(basePath ++ "Processing.scd").value;

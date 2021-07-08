@@ -31,7 +31,7 @@ a.set(\sdm, rrand(0.1,0.5),\mod, rrand(1,10));
 // Modulate a parameter
 a.modulate(\sdm, { LFNoise1.kr(10, 0.1, 0.2) } );
 
-// Append a transformation operation // THIS ONE IS NOT GOOD!
+// Append a transformation operation 
 a.transform( o.processing.waveloss() );
 
 // Another transformation
