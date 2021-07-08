@@ -51,6 +51,7 @@ behaviour.mfb = {|ev, nin|
 
 };
 
+/*
 behaviour.mcloud = {|ev,nin,dur=2,times=4|
 
     TF(\mcloud, {
@@ -125,8 +126,7 @@ behaviour.mcloud = {|ev,nin,dur=2,times=4|
     	NF(ripb).stop;
 
     })
-
-};
+}; */
 
 behaviour.switchx = {|ev,pool,dur=6|
 

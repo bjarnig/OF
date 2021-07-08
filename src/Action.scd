@@ -68,6 +68,7 @@ actions.disturb = {|ev, name, freq=1000, mod=28, delay=0.2, feedback = 0.9,outpu
 			var bpf = LFNoise1.kr(XLine.kr(3,40,dur)).range(freq,(freq*8).min(15000));
 			var q = XLine.kr(4,1,dur);
 			var sig = Fb({|fbSig| BPF.ar(fbSig * feedback + son, bpf, q).tanh; }, 1.0, delay.min(1.0));
+			// Feedback Quark is required, Quarks.install("Feedback")
 			sig = LPF.ar(son, 80) + sig;
 			sig = sig * EnvGen.ar(Env([1,0.8,0.5,0.0], [dur/2,dur/3,dur/4]));
 			sig = XFade2.ar(sig, sig * LFNoise0.ar(mod).range(0.2,1.2), XLine.kr(-1, 1, dur/3));

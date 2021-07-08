@@ -73,7 +73,7 @@ synthesis.gravit = {|ev, name=\gravit|
 		var trigx = Impulse.kr(rate);
 		var seqx = Diwhite(trigMin, trigMax, inf);
 		var trig = Demand.kr(trigx, 0, seqx);
-		HPF.ar(BBandStop.ar(LeastChange.ar(GravityGrid.ar(0, [freq/2, freq]), LoFM.ar(freq)), Lag.kr(trig), 12), 40) * amp
+		HPF.ar(BBandStop.ar(LeastChange.ar(GravityGrid.ar(0, [freq/2, freq]), OFLoFM.ar(freq)), Lag.kr(trig), 12), 40) * amp
 	})
 };
 
@@ -86,7 +86,7 @@ synthesis.demwi = {|ev, name=\demwi|
 		var seqx = Diwhite(trigMin, trigMax, inf).midicps;
 		var trig = Demand.kr(trigx, 0, seqx);
 		var snd = HPF.ar(BPeakEQ.ar(
-			DemWhite.ar(1).tanh(
+			OFDemWhite.ar(1).tanh(
 			SinOsc.ar(trig)),
 			LFNoise1.ar(2).range(80,6000ss),
 			LFNoise1.ar(3).range(2,8),
@@ -139,7 +139,7 @@ synthesis.sofbas = {|ev, name=\sofbas|
 
 synthesis.brom = {|ev, name=\brom|
 	NF(name, {|freq=66, amp=1.0|
-		Bromate.ar(freq, 4, 6) * amp
+		OFBromate.ar(freq, 4, 6) * amp
 	})
 };
 
@@ -147,7 +147,7 @@ synthesis.brom = {|ev, name=\brom|
 
 synthesis.fmdin = {|ev, name=\fmdin|
 	NF(name, {|freq=66, mod=8, amp=1.0|
-		PMOsc.ar(freq, Dinocap.ar(mod).range(10,100), 1.1) * 0.25 * amp
+		PMOsc.ar(freq, OFDinocap.ar(mod).range(10,100), 1.1) * 0.25 * amp
 	})
 };
 
@@ -155,7 +155,7 @@ synthesis.fmdin = {|ev, name=\fmdin|
 
 synthesis.nanite = {|ev, name=\nanite|
 	NF(name, {|freq=40, mod=14.1, amp=1.0, lpf=8000|
-		LPF.ar(Nanite.ar(mod, surface:0.001, freqShift:freq), lpf) * 1.2
+		LPF.ar(OFNanite.ar(mod, surface:0.001, freqShift:freq), lpf) * 1.2
 	})
 };
 
@@ -163,7 +163,7 @@ synthesis.nanite = {|ev, name=\nanite|
 
 synthesis.dagal = {|ev, name=\dagal|
 	NF(name, {|freq=57, amp=1.0|
-		Dagal.ar(57, rate:2, resTo:1, lpf:800, mul:2) * amp
+		OFDagal.ar(57, rate:2, resTo:1, lpf:800, mul:2) * amp
 	})
 };
 

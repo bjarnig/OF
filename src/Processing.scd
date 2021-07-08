@@ -52,7 +52,7 @@ processing.foldorm = {|ev|
 	{ |in, fdmod=1, fdlag=8, fdfreq=50|
 		var la, lb;
 		la = in.fold2(SinOsc.ar( Lag.ar(GbmanL.ar(8 * fdmod, 0.6).range(fdfreq*0.2,fdfreq*0.3), fdlag)));
-		la = la	* LFDorm.ar(fdmod* 0.01, min:0.3, max:1.1);
+		la = la	* OFLFDorm.ar(fdmod* 0.01, min:0.3, max:1.1);
 		lb = in.thresh(SinOsc.ar(GbmanL.ar(3*fdmod).range(fdfreq,fdfreq*4)));
 		la + lb
 	};
@@ -103,20 +103,20 @@ processing.dualdist = {|ev|
 };
 
 processing.amclip = {|ev|
-	{|in,afreq=100| 
+	{|in,afreq=100|
 		in.amclip(Saw.ar(afreq))
 	}
 };
 
 processing.wloss = {|ev|
-	{|in,drop=30,outoff=40,mode=2| 
-		WaveLoss.ar(in,drop,outoff,mode) 
+	{|in,drop=30,outoff=40,mode=2|
+		WaveLoss.ar(in,drop,outoff,mode)
 	}
 };
 
 processing.bfold = {|ev|
-	{|in,bffreq=24,bfstop=500,bfbw=6| 
-		HPF.ar(BBandStop.ar( in.fold2(SinOsc.ar( [bffreq*1.05,bffreq])),bfstop,bfbw),rrand(40,60)) * 4;  
+	{|in,bffreq=24,bfstop=500,bfbw=6|
+		HPF.ar(BBandStop.ar( in.fold2(SinOsc.ar( [bffreq*1.05,bffreq])),bfstop,bfbw),rrand(40,60)) * 4;
 	}
 };
 
@@ -210,7 +210,7 @@ processing.gravch = {|ev|
 processing.vesica = {|ev|
 	{|in|
 		var mod = LFNoise1.kr(0.01);
-		Fold.ar(in, Vesica.ar(mod.range(0.5,2), 0.2), Vesica.ar(mod.range(5,15), 0.2) * 3)
+		Fold.ar(in, OFVesica.ar(mod.range(0.5,2), 0.2), OFVesica.ar(mod.range(5,15), 0.2) * 3)
 	}
 };
 
