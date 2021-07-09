@@ -38,7 +38,7 @@ OF {
 	}
 
 	waveformNames {
-		^this.waveform.keys.asArray
+		^this.waveform.keys.asArray.reject{|name| name == "append" }
 	}
 
 	processingNames {

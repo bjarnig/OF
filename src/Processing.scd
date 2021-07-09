@@ -19,9 +19,9 @@ processing.verb = {|ev|
 };
 
 processing.decimator = {|ev|
-	{ |in, drate=8000, dbits=8|
+	{ |in, dratef=5000, dratet=15000, dbitsf=16, dbitst=2|
 		var freq = Tartini.kr(in)[0][0];
-		Decimator.ar(in,freq.linlin(0,20000, 5000,15000),freq.linlin(20,20000, 16, 2))
+		Decimator.ar(in,freq.linlin(0,20000,5000,15000),freq.linlin(20,20000, dbitst, dbitsf))
 	};
 };
 
@@ -78,75 +78,78 @@ processing.clip = {|ev|
 };
 
 processing.drift = {|ev|
-	{|in|
+	{|in, drfreqh=0.25, drfreql=0.15, drlopf=200, drlopt=800, drhpf=7000, drhpt=12000|
 		var sig, osc, thres, freq=1000, la, lb, lc, verb, effect;
 		var envLo = 0.8, envHi = 0.99;
 		var times = { rrand(0.5, 1.8) } ! 8;
 		var mix = EnvGen.ar(Env([0, envLo, envHi, envHi/2, envLo, envLo/2, envHi, envLo, 0], times).circle);
 		sig = in; verb = sig;
-		8.do{verb=AllpassL.ar(verb,0.3,{0.1.rand+0.1}!2,5)};
-		verb = verb.tanh;
-		effect = BLowPass4.ar(verb * 0.5, LFNoise2.ar(0.15).range(200, 800), 0.2) +
-		BHiPass4.ar(verb * 0.5, LFNoise2.ar(0.25).range(7000, 12000),0.2);
+		8.do{verb=AllpassL.ar(verb,0.3,{0.1.rand+0.1}!2,5)}; verb = verb.tanh;
+		effect = BLowPass4.ar(verb * 0.5, LFNoise2.ar(drfreql).range(drlopf, drlopt), 0.2) +
+		BHiPass4.ar(verb * 0.5, LFNoise2.ar(drfreqh).range(drhpf, drhpt), 0.2);
 		(effect * mix) + (sig * (1-mix));
 	}
 };
 
 processing.dualdist = {|ev|
-	{|in,lpf=100, hpf=8000, gaina=1000, gainb=200|
+	{|in, ddlpf=100, ddhpf=8000, ddgaina=800, ddgainb=200|
 		var son = in;
 		var f1 = rrand(0.3, 2.5);
 		var f2 = rrand(1.2, 3.5);
-		HPF.ar(SoftClipAmp8.ar(son, pregain:gaina), Lag.ar(LFNoise0.ar(f1).range(hpf, hpf*2))) +
-		LPF.ar(SoftClipAmp8.ar(son, pregain:gainb), Lag.ar(LFNoise0.ar(f2).range(lpf*0.25, lpf)))
+		HPF.ar(SoftClipAmp8.ar(son, pregain:ddgaina), Lag.ar(LFNoise0.ar(f1).range(ddhpf, ddhpf * 2))) +
+		LPF.ar(SoftClipAmp8.ar(son, pregain:ddgainb), Lag.ar(LFNoise0.ar(f2).range(ddlpf * 0.25, ddlpf)))
 	}
 };
 
 processing.amclip = {|ev|
-	{|in,afreq=100|
-		in.amclip(Saw.ar(afreq))
+	{|in,amfreq=100|
+		in.amclip(Saw.ar(amfreq))
 	}
 };
 
 processing.wloss = {|ev|
-	{|in,drop=30,outoff=40,mode=2|
-		WaveLoss.ar(in,drop,outoff,mode)
+	{|in,wldrop=30, wloutoff=40, wlmode=2|
+		WaveLoss.ar(in, wldrop, wloutoff, wlmode)
 	}
 };
 
 processing.bfold = {|ev|
-	{|in,bffreq=24,bfstop=500,bfbw=6|
-		HPF.ar(BBandStop.ar( in.fold2(SinOsc.ar( [bffreq*1.05,bffreq])),bfstop,bfbw),rrand(40,60)) * 4;
+	{|in, bffreq=24, bfstop=500, bfbw=6|
+		HPF.ar(
+			BBandStop.ar(
+				in.fold2(SinOsc.ar([bffreq*1.05,bffreq])),bfstop,bfbw
+			),
+		rrand(40,60)) * 4;
 	}
 };
 
 processing.xloss = {|ev|
-	{|in|
-		var sh = Amplitude.ar(in*2, 0.001).linlin(0,1,10,18);
-		WaveLoss.ar(in, LFDNoise3.ar( SinOsc.ar(0.1).range(2,4) ).range(sh*0.5,sh), 25)
+	{|in, xlfrom=10, xlto=18, xlfreq=0.1, xlfreqf=2, xlfreqt=4|
+		var sh = Amplitude.ar(in*2, 0.001).linlin(0,1,xlfrom,xlto);
+		WaveLoss.ar(in, LFDNoise3.ar( SinOsc.ar(xlfreq).range(xlfreqf,xlfreqt) ).range(sh*0.5,sh), 25)
 	}
 };
 
 processing.diffuse = {|ev|
-	{|in|
-		var verb = GVerb.ar( BBandStop.ar(in, LFDNoise1.ar(3).range(500,2000)), 25, 5, damping:0.5 );
+	{|in, diffreq=3, diffrom=500, difto=2000, difroom=25|
+		var verb = GVerb.ar( BBandStop.ar(in, LFDNoise1.ar(diffreq).range(diffrom,difto)), difroom, 5, damping:0.5 );
 		XFade2.ar(in, verb, -0.75);
 	}
 };
 
 processing.lfdnamp = {|ev|
-	{|in|
-		var amp = Amplitude.ar(in).range(4, SinOsc.ar(0.1).range(10,20));
+	{|in, lfafrom=4, lfato=10, lfamod=0.1, lfashift=0.8|
+		var amp = Amplitude.ar(in).range(lfafrom, SinOsc.ar(lfamod).range(lfato,lfato*2));
 		var sig = in * LFDNoise3.ar(amp).range(0.1,1.2);
-		sig.distort + PitchShift.ar(sig, 0.02, 0.8)
+		sig.distort + PitchShift.ar(sig, 0.02, lfashift)
 	}
 };
 
 processing.filtfold = {|ev|
-	{|in|
+	{|in,ffofrom=100, ffotto=8000|
 		var freq = Tartini.kr(in)[0][0].linlin(20,20000,1,10);
 		var sig = DFM1.ar(in,
-		LFDNoise3.ar(freq/64).range(100,8000),
+		LFDNoise3.ar(freq/64).range(ffofrom, ffotto),
 		SinOsc.kr(freq/32).range(0.92,1.0135),1,0,0.005,0.7);
 		sig = XFade2.ar(sig, Fold.ar(sig, SinOsc.ar(freq*10), SinOsc.ar(freq*5)), LFDNoise0.ar(freq* 0.1).range(-1.0,1.0), 0.75);
 		HPF.ar(sig,40)
@@ -154,21 +157,18 @@ processing.filtfold = {|ev|
 };
 
 processing.rmsfold = {|ev|
-	{|in|
-		var rms = RMS.ar(in * SinOsc.ar(3) * 2).range(1,12);
+	{|in, rmfreq=3, rmfrom=1, rmtto=12, rmbw=8|
+		var rms = RMS.ar(in * SinOsc.ar(rmfreq) * 2).range(rmfrom,rmtto);
 		var freq = Lag.kr(Tartini.kr(in)[0][0], 2.0);
-		HPF.ar(BBandStop.ar( in.fold2(SinOsc.ar( [rms,rms+1])), freq * 5, 8), 60) * 3;
+		HPF.ar(BBandStop.ar( in.fold2(SinOsc.ar( [rms,rms+1])), freq * 5, rmbw), 60) * 3;
 	}
 };
 
-processing.ampdrift = {|ev,dur=5|
-	{|in|
-		var lffreq=10;
-		var min = 0.0;
-		var max = 1.3;
+processing.ampdrift = {|ev,addur=5|
+	{|in, admin = 0.0, admax = 1.3|
 		var freq = Tartini.kr(in)[0][0].linlin(0,20000, 1,15);
-		in * EnvGen.ar( Env([min, max * 0.5, max, max, min], [0.1,2,2,1].normalizeSum * dur, [5,4,-4,-5] ).circle )
-		* LFDNoise3.ar(freq).range(min,max)
+		in * EnvGen.ar( Env([admin, admax * 0.5, admax, admax, admin], [0.1,2,2,1].normalizeSum * addur, [5,4,-4,-5] ).circle )
+		* LFDNoise3.ar(freq).range(admin,admax)
 	}
 };
 
@@ -177,7 +177,7 @@ processing.pulsecross = {|ev,base=200|
 		var freq = Tartini.kr(in)[0][0].linlin(0,20000, 1, 10);
 		var osc, verb, thres, sig;
 		thres = Lag.kr(Amplitude.kr(in), 0.1);
-		sig = Splay.ar(Pulse.ar(Array.series(10, 200, 20) * Lag.kr(freq, 2.0) )) * thres;
+		sig = Splay.ar(Pulse.ar(Array.series(10, base, 20) * Lag.kr(freq, 2.0) )) * thres;
 		XFade2.ar(in,sig, 0.5)
 }
 };
@@ -189,80 +189,76 @@ processing.mostchanged = {|ev|
 };
 
 processing.feedfold = {|ev|
-	{|in|
-		var feedback=0.6, delay=0.2, shiftFreq=200, shiftDens=0.1;
-		var effect;
-		effect = in + LocalIn.ar(2);
-		effect = effect.fold2(SinOsc.ar( LFNoise2.ar(0.1).range(10,20) ));
-		effect = DelayC.ar(effect, delay, SinOsc.ar(0.001).range(0.1,0.202));
-		LocalOut.ar(effect * feedback);
+	{|in, ffdfreq=0.1, ffdfold=10, ffdfeedback=0.6, ffddelay=0.2|
+		var effect = in + LocalIn.ar(2);
+		effect = effect.fold2(SinOsc.ar( LFNoise2.ar(ffdfreq).range(ffdfold,ffdfold*2) ));
+		effect = DelayC.ar(effect, ffddelay, SinOsc.ar(ffdfreq * 0.01).range(0.1,0.202));
+		LocalOut.ar(effect * ffdfeedback);
 		effect
 	}
 };
 
 processing.gravch = {|ev|
-	{|in|
-		var freq = Tartini.kr(in)[0][0].linlin(0,20000, 100,1500);
+	{|in, grfrom=100, grto=1500|
+		var freq = Tartini.kr(in)[0][0].linlin(0,20000, grfrom, grto);
 		LPF.ar(LeastChange.ar(GravityGrid.ar(0, [freq * 0.25, freq* 0.5] ), in), (freq * 50).min(15000), 0.4);
 	}
 };
 
 processing.vesica = {|ev|
-	{|in|
-		var mod = LFNoise1.kr(0.01);
-		Fold.ar(in, OFVesica.ar(mod.range(0.5,2), 0.2), OFVesica.ar(mod.range(5,15), 0.2) * 3)
+	{|in, vefreq=0.01, vefrom=0.5, veto=2|
+		var mod = LFNoise1.kr(vefreq);
+		Fold.ar(in, OFVesica.ar(mod.range(vefrom,veto)), OFVesica.ar(mod.range(vefrom*10,veto*8)) * 3)
 	}
 };
 
 processing.ghole = {|ev|
-	{|in|
-		var mod = LFNoise1.kr(0.1);
-		Greyhole.ar(FreqShift.ar(in, 0.1, Lag.kr(mod.range(100,1000), 4)), 0.8, 0.6, mod.range(5,10), 0.1, 0.8, 0.4, 0.5)
+	{|in, ghmod=0.1, ghfreqf=100, ghfreqt=1000|
+		var mod = LFNoise1.kr(ghmod);
+		Greyhole.ar(FreqShift.ar(in, 0.1, Lag.kr(mod.range(ghfreqf, ghfreqt), 4)), 0.8, 0.6, mod.range(5,10), 0.1, 0.8, 0.4, 0.5)
 	}
 };
 
 processing.bbstop = {|ev|
-	{|in|
-		BBandStop.ar(in.round(0.1), LFNoise1.ar(0.3).exprange(100, 8000), 6) * 1.5;
+	{|in, bbsfreq=0.3, bbsfiltf=100, bbsfiltt=8000, bbsfiltbw=6|
+		BBandStop.ar(in.round(0.1), LFNoise1.ar(bbsfreq).exprange(bbsfiltf, bbsfiltt), bbsfiltbw) * 1.5;
 	}
 };
 
-processing.dfmf = {|ev|
+processing.dfmf = {|ev, dffreq=0.5, dffiltf=50, dffiltt=8000|
 	{|in|
 		var chain = FFT(LocalBuf(2048), in);
-		var centroid = SpecCentroid.kr(chain) * LFNoise1.kr(0.5).exprange(0.001,0.2);
+		var centroid = SpecCentroid.kr(chain) * LFNoise1.kr(dffreq).exprange(0.001,0.2);
 		in = in.thresh(SinOsc.ar(centroid * 0.08));
-		DFM1.ar(in,LFDNoise1.ar(centroid * 0.05).range(50,8000),SinOsc.kr(centroid * 0.05).range(0.82,0.9),1,0,0.005,0.7);
+		DFM1.ar(in,LFDNoise1.ar(centroid * 0.05).range(dffiltf,dffiltt),SinOsc.kr(centroid * 0.05).range(0.82,0.9),1,0,0.005,0.7);
 	}
 };
 
-processing.bcomb = {|ev|
+processing.bcomb = {|ev, bcmult=3, bcfilt=100, bcbw=2, bcdellag=3, bcdelf=0.2, bcdelt=0.8, bcdeldec=2|
 	{|in|
-		var mod = LFNoise1.ar([1, 1.1, 1.2, 1.3] * 3);
-		var snd = BBandStop.ar(in, mod.exprange(100, 1000), mod.exprange(2, 4));
-		Splay.ar( CombC.ar(snd, 0.2, Lag.kr(Amplitude.kr(in), 3).range(0.2,0.8), 2))
+		var mod = LFNoise1.ar([1, 1.1, 1.2, 1.3] * bcmult);
+		var snd = BBandStop.ar(in, mod.exprange(bcfilt, bcfilt*10), mod.exprange(bcbw, bcbw*2));
+		Splay.ar( CombC.ar(snd, 0.2, Lag.kr(Amplitude.kr(in), bcdellag).range(bcdelf,bcdelt), bcdeldec))
 	}
 };
 
 processing.cubmod = {|ev|
-	{|in|
+	{|in, ctrig=5, ctfrom=1, ctto=10, ctampm=0.5, ctampa=0.9|
 		var trig, seq, freq;
-		trig = Impulse.kr(5);
-	    seq = Diwhite(Rand(0.1,2), Rand(10,30), inf).midicps;
+		trig = Impulse.kr(ctrig);
+	    seq = Diwhite(Rand(ctfrom*0.1, ctfrom*2), Rand(ctto,ctto*3), inf).midicps;
 		freq = Demand.kr(trig, 0, seq);
-		LFCub.kr([freq, freq/4], 0, 0.5, 0.9) * in
+		LFCub.kr([freq, freq/4], 0, ctampm, ctampa) * in
 	}
 };
 
 processing.lfddel = {|ev|
-	{|in|
-		var feedback=0.5, delay=0.2, shiftFreq=200, shiftDens=0.1;
-		var effect;
-		var mod = LFNoise2.ar(0.1);
-		effect = in + LocalIn.ar(2);
+	{|in, lfdfeedback=0.5, lfddelay=0.2, lfdfreq=0.1|
+		var mod = LFNoise2.ar(lfdfreq);
+		var effect = in + LocalIn.ar(2);
 		effect = effect * LFDNoise1.ar(mod.range(1,10)).range(0.5,1.0);
-		effect = DelayC.ar(effect, delay, mod.range(0.1, 0.302));
-		LocalOut.ar(effect * feedback);
+		effect = DelayC.ar(effect, lfddelay, mod.range(0.1, 0.302));
+		LocalOut.ar(effect * lfdfeedback);
 		effect
 	}
 };
