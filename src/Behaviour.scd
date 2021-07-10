@@ -8,8 +8,8 @@
 
 var behaviour = ();
 
-behaviour.run = {|ev, ndef|
-	ndef.play
+behaviour.run = {|ev, nf|
+	nf.play
 };
 
 behaviour.mfb = {|ev, nin|
@@ -17,10 +17,10 @@ behaviour.mfb = {|ev, nin|
 	var name = ("mfb\_" ++ name).asSymbol;
 
 	NF(name,
-	{| feedback=0.998, delay=0.08, shiftFreq=10, shiftMod=20, shiftLpf=18000, amp=1.0|
+	{|feedback=0.998, delay=0.08, shiftFreq=10, shiftMod=20, shiftLpf=18000, amp=1.0|
 		var sig, input, first, second, shiftSnd, combined;
 
-		// Ndef to process
+		// NF to process
 		sig = nin.ar;
 
 		// local in, 4 channels
@@ -54,7 +54,7 @@ behaviour.mfb = {|ev, nin|
 behaviour.switchx = {|ev,pool,dur=6|
 
     {
-		pool.items.do {|pl|
+		pool.do {|pl|
 
 			pl.play;
 			rrand(dur,dur*2).wait;
@@ -71,9 +71,9 @@ behaviour.overlap = {|ev,nodes,dur=8,overlap=2,next=7,amp=0.75, output=0, emit, 
     {
     	nodes.do{|node|
 
-			var name = ("overlap" ++ Date.getDate.secStamp ++ node.key).asSymbol;
+			var name = OF.key(node, "overlap");
 
-    		Ndef(name, {
+    		NF(name, {
     			HPF.ar(node.ar, 40, amp) * EnvGen.ar(Env( [0.0,1.0,1.0,0.0], envDur))
 			}).play(output);
 
@@ -94,15 +94,13 @@ behaviour.shadow = {|ev,nodes,dur=8,overlap=2,next=6,amp=1.0,factor=0.5, output=
 		nodes.do{|node,i|
 
 			if(i % 2 == 0, {
-    			Ndef(("shadowhi" + node.key).asSymbol, {
+    			NF(OF.key(node, "shadowhi"), {
     				HPF.ar(node.ar, 40, amp) * EnvGen.ar(Env( [0.0,1.0,1.0,0.0], envDur))
 				}).play(output);
 
-				if(emit.notNil, { emit.(node.key) });
-    			next.wait;
-
+				if(emit.notNil, { emit.(node.key) }); next.wait;
     		}, {
-    			Ndef(("shadowlow" + node.key).asSymbol, {
+    			NF(OF.key(node, "shadowlow"), {
     				HPF.ar(node.ar, 40, amp * 0.3) * EnvGen.ar(Env( [0.0,1.0,1.0,0.0], envDur * 0.5))
 				}).play(output);
 
@@ -117,36 +115,38 @@ behaviour.shadow = {|ev,nodes,dur=8,overlap=2,next=6,amp=1.0,factor=0.5, output=
 
 behaviour.brpb = {|ev, nodes, durFrom=2, durTo=4, filtFrom=100, filtTo=4000, bw=6, res=0.1, bramp=1.0, bpamp=1.0, output=0, emit, cb|
 
-	var nbr = ("brjct1").asSymbol;
-	var nbp = ("brjct2").asSymbol;
+	var result = List();
 
-    {
+	{
     	nodes.do {|node|
 
-			Ndef(nbr, { BBandStop.ar(node.ar, rrand(filtFrom,filtTo), bw, bramp ) }).play(output);
-			Ndef(nbp, { BBandPass.ar(node.ar, rrand(filtFrom,filtTo), res, bpamp ) }).play(output);
+			var nbr = OF.key(node, "brjct1");
+			var nbp = OF.key(node, "brjct2");
+
+			NF(nbr, { BBandStop.ar(node.ar, rrand(filtFrom,filtTo), bw, bramp ) }).play(output);
+			NF(nbp, { BBandPass.ar(node.ar, rrand(filtFrom,filtTo), res, bpamp ) }).play(output);
+			result.add(nbr); result.add(nbp);
+
 			if(emit.notNil, { emit.(node.key) });
-    		rrand(durFrom,durTo).wait;
+    		rrand(durFrom, durTo).wait;
     	};
 
-    	Ndef(nbr).stop;
-    	Ndef(nbp).stop;
-
+		result.do{|node| node.stop };
 		if(cb.notNil, { cb.() })
 
     }.fork;
 
-    [ Ndef(nbp), Ndef(nbp) ]
+    output
 };
 
 behaviour.lfswitch = {|ev, nodes, modFreq, freqfrom, freqTo, output=0, emit|
 
 	var name = '/lfswitch' ++ 100000.rand;
 	var path = name.asSymbol;
-	var ndef = name.replace("/","").asSymbol;
-    var func = OSCFunc(emit, path, s.addr);
+	var nf = name.replace("/","").asSymbol;
+	var func = OSCFunc(emit, path, s.addr);
 
-	NF(ndef, {
+	NF(nf, {
 		var trig = LFNoise0.ar(SinOsc.ar(modFreq).range(freqfrom,freqTo));
 		var selection = trig.range(0,nodes.size);
 		var reply = Changed.ar(selection);
@@ -159,18 +159,17 @@ behaviour.lfswitchx = {|ev, nodes, freq=5, focus=2, wrap=true, output=0, emit|
 
 	var name = '/switcherx' ++ 100000.rand;
 	var path = name.asSymbol;
-	var ndef = name.replace("/","").asSymbol;
+	var nf = name.replace("/","").asSymbol;
 	var osc = (name.replace("/","") ++ osc).asSymbol;
-    var func = OSCdef(osc, emit, path, s.addr);
+	var func = OSCdef(osc, emit, path, s.addr);
 
-	NF(ndef, {
+	NF(nf, {
 		var trig = LFNoise0.ar(freq);
 		var selection = trig.range(0,nodes.size);
 		var reply = Changed.ar(selection);
 		SendReply.ar(reply, path);
 		SelectXFocus.ar(selection, nodes.collect{|node| node.ar}, focus, wrap);
 	}).play(output)
-
 };
 
 behaviour.fspread = {|ev, nodes, range=10000, base=100, mult=10, bw=0.5, delFrom=1, delTo=2, output=0, emit, cb|
@@ -179,7 +178,7 @@ behaviour.fspread = {|ev, nodes, range=10000, base=100, mult=10, bw=0.5, delFrom
 
 	{
 		nodes.do {|node,i|
-			Ndef(("fspread" ++ node.key).asSymbol, {
+			NF(OF.key(node, "fspread"), {
 				var snd = BBandPass.ar(node.ar, base + ( amount * i ), bw);
 				snd * (mult / nodes.size)
 			}).play(output);
@@ -196,24 +195,24 @@ behaviour.fspread = {|ev, nodes, range=10000, base=100, mult=10, bw=0.5, delFrom
 behaviour.interp = {|ev,node, param, from, to, env, dur=10, step=0.1, times=inf, output=0, emit, cb|
 
 	var n = dur / step;
-    var m = to - from;
+	var m = to - from;
 
 	node.play(output);
 
-    {
-    	times.do{
-    		n.do{|i|
-    			var index = i.linlin(0,n-1,0.0,1.0);
-    			var value = (from + (m * env[index]));
-    			node.set(param, value);
-    			step.wait;
-    		};
+	{
+		times.do{
+			n.do{|i|
+				var index = i.linlin(0,n-1,0.0,1.0);
+				var value = (from + (m * env[index]));
+				node.set(param, value);
+				step.wait;
+			};
 			if(emit.notNil, { emit.(node.key) });
-    	};
+		};
 
-		if(cb.notNil, { cb.() })
+		sif(cb.notNil, { cb.() })
 
-    }.fork
+	}.fork
 };
 
 behaviour

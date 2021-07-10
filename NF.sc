@@ -17,15 +17,12 @@ NF : Ndef {
 	}
 
 	transform {|process, index|
-		var i = index;
-
-		if(i.isNil, {
+		if(index.isNil && pindex.isNil, {
 			this.initialize();
-			pindex = pindex + 1;
-			i = pindex;
 		});
 
-		this[i] = \filter -> process;
+		pindex = pindex + 1;
+		this[pindex] = \filter -> process;
 	}
 
 	control {|process, index|
@@ -138,16 +135,42 @@ NF : Ndef {
 	}
 }
 
-Pool {
+OFPool : List {
 
-	var <>items;
+	stackpd {|processes, lib, clear=true|
+		this.array.do{|nf| nf.stackpd(processes, lib, clear=true) }
+	}
 
-	*new {|input|
-		^super.newCopyArgs(input).init(input);
-    }
+	stackprand {|processes,lib,times=10,delay=3,clear=true|
+		this.array.do{|nf| nf.stackprand(processes,lib,times=10,delay=3,clear=true) }
+	}
 
-	init {|in|
-		this.items = in;
+	stackp {|processes, lib, clear=true|
+		this.array.do{|nf| nf.stackp(processes, lib, clear=true) }
+	}
+
+	stackd {|processes, lib, delFrom=0.0, delTo=1.0, clear=true|
+		this.array.do{|nf| nf.stackd(processes, lib, delFrom=0.0, delTo=1.0, clear=true) }
+	}
+
+	modulate {|param, process|
+		this.array.do{|nf| nf.modulate(param, process) }
+	}
+
+	stack {|processes, lib, clear=true|
+		this.array.do{|nf| nf.stack(processes, lib, clear=true) }
+	}
+
+	transform {|process, index|
+		this.array.do{|nf| nf.transform(process, index) }
+	}
+
+	control {|process, index|
+		this.array.do{|nf| nf.control(process, index) }
+	}
+
+	play {
+		this.array.do{|nf| nf.play }
 	}
 }
 

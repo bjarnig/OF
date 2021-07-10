@@ -179,7 +179,7 @@ processing.pulsecross = {|ev,base=200|
 		thres = Lag.kr(Amplitude.kr(in), 0.1);
 		sig = Splay.ar(Pulse.ar(Array.series(10, base, 20) * Lag.kr(freq, 2.0) )) * thres;
 		XFade2.ar(in,sig, 0.5)
-}
+	}
 };
 
 processing.mostchanged = {|ev|
@@ -261,17 +261,6 @@ processing.lfddel = {|ev|
 		LocalOut.ar(effect * lfdfeedback);
 		effect
 	}
-};
-
-// Utilities //
-
-processing.append = {|ev, nf, name|
-	var local = ("append_" ++ name).asSymbol;
-	local.postln;
-	nf.postln;
-	NF(local, { nf.ar });
-	NF(local)[10] = \filter -> ev[name].value;
-	NF(local);
 };
 
 )

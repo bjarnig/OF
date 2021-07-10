@@ -14,7 +14,7 @@ var observers = ();
 observers.zeronan = {|ev, name=\encore, out=0|
 
 	var brombuf = Buffer.alloc(s, 512);
-	var key = ("observe-zeronan-" ++ name).asSymbol;
+	var key = OF.key(nil, "observe-zeronan-" ++ name);
 
 	NF(key, {
 		var snd, analysed;
@@ -27,7 +27,7 @@ observers.zeronan = {|ev, name=\encore, out=0|
 observers.vesipeak = {|ev, name=\encore, out=0|
 
 	var brombuf = Buffer.alloc(s, 512);
-	var key = ("observe-vesipeak-" ++ name).asSymbol;
+	var key = OF.key(nil, "observe-vesipeak-" ++ name);
 
 	NF(key, {
 		var snd, peak, peakFollow, runningMax;
@@ -43,7 +43,7 @@ observers.vesipeak = {|ev, name=\encore, out=0|
 observers.bromtrack = {|ev, name=\encore, out=0|
 
 	var brombuf = Buffer.alloc(s, 512);
-	var key = ("observe-bromtrack-" ++ name).asSymbol;
+	var key = OF.key(nil, "observe-bromtrack-" ++ name);
 
 	NF(key, {
 		var chain, onsets, snd, verb;
@@ -58,7 +58,7 @@ observers.bromtrack = {|ev, name=\encore, out=0|
 observers.graytick = {|ev, name=\encore, out=0|
 
 	var gtbuf = Buffer.alloc(s, 512);
-	var key = ("observe-graytick-" ++ name).asSymbol;
+	var key = OF.key(nil, "observe-graytick-" ++ name);
 
 	NF(key, {|thresf=0.1, threst=0.4, thresfreq=0.1|
 		var chain, onsets, snd, verb;
@@ -72,9 +72,10 @@ observers.graytick = {|ev, name=\encore, out=0|
 
 observers.adapt = {|ev, name=\nf, out=0|
 
+	var key = OF.key(nil, "observe-adapt-" ++ name);
 	var adapt = true;
 
-	Tdef( ("adapt-" ++ name).asSymbol, {
+	TF(key, {
 
 		" ** adapt to : [" ++ name ++ "]".postln;
 
@@ -86,7 +87,7 @@ observers.adapt = {|ev, name=\nf, out=0|
 
 		0.1.wait;
 
-		NF(\logichpf, { HPF.ar( Ndef(\logic).ar, 2000) * Amplitude.ar(NF(\fo).ar,0.1).range(2.0, 0.0)  }).play(out);
+		NF(\logichpf, { HPF.ar( NF(\logic).ar, 2000) * Amplitude.ar(NF(\fo).ar,0.1).range(2.0, 0.0)  }).play(out);
 
 		rrand(10,15).wait;
 

@@ -73,13 +73,12 @@ a.stackd([\clip, \clip, \minsaw, \minsaw, \minsaw, \bfold], o, 3, 5).play;
 o = OF(this);
 a = o.waveform.hectn(\encore);
 a.stackprand([
-	[\bfold, (\bffreq: 20, \bfstop: 100)],
-	[\nmod, (\nfreq: 100)],
-	[\drift, ()],
-	[\wloss, ()]
+	[\drift, (\drfreqh: 2, \drfreql:8)],
+	[\wloss, (\wldrop: 25)],
+	[\bfold, (\bffreq: 20, \bfstop: 100)]
 ], o, 20, 2);
 
-o.processing.append(a, \diffuse).play
+a.transform(o.pr.diffuse).play
 
 )
 
@@ -90,18 +89,17 @@ o = OF(this);
 a = o.waveform.costa(\co);
 a.stackpd([
 	[\bfold, 3, (\bffreq: 20, \bfstop: 100)],
-	[\drift, 14, ()],
-	[\wloss, 21, ()],
-	[\nmod, 12, (\nfreq: 1000)]
+	[\lfdnamp, 14, (\lfamod: 0.8)],
+	[\gravch, 21, (\grto: 2000)]
 ], o);
 
 b = o.waveform.hectn(\pl);
 b.stack([\clip, \minsaw, \bfold, \minsaw].scramble, o);
 
 c = o.waveform.dramp(\dramp);
-c.stackd([\clip, \clip, \minsaw, \minsaw, \minsaw, \bfold], o, 3, 5);
+c.stackd([\clip, \clip, \minsaw, \gravch, \bfold], o, 3, 5);
 
 // Submit the three pipelines to a switching algorithm
-o.behaviour.switchx( Pool([a,b,c]) ).play
+o.behaviour.switchx( OFPool[a,b,c] ).play
 
 )

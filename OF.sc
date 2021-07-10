@@ -44,4 +44,12 @@ OF {
 	processingNames {
 		^this.processing.keys.asArray
 	}
+
+	*key {|node, name|
+		if(node.isNil, {
+			^(name ++ "_" ++ Date.getDate.secStamp).asSymbol
+		}, {
+			^(node.key ++ "_" ++ Date.getDate.secStamp ++ "_" ++ name).asSymbol
+		})
+	}
 }
