@@ -103,3 +103,10 @@ c.stackd([\clip, \clip, \minsaw, \gravch, \bfold], o, 3, 5);
 o.behaviour.switchx( OFPool[a,b,c] ).play
 
 )
+
+( /* 10 random pipelines with 4 processes and overlap behaviour */
+
+o = OF(this); 
+o.bh.overlap(10.collect{ c=o.wf.dramp( OF.key(nil,"x") ); c.stack(o.choosePr(4),o)})
+
+)

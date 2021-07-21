@@ -45,6 +45,10 @@ OF {
 		^this.processing.keys.asArray
 	}
 
+	choosePr {|count|
+		^count.collect{ this.processingNames.choose };
+	}
+
 	*key {|node, name|
 		if(node.isNil, {
 			^(name ++ "_" ++ Date.getDate.secStamp).asSymbol
