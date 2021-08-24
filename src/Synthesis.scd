@@ -32,7 +32,7 @@ synthesis.vsaw = {|ev, name=\vsaw|
 		var thres = Lag.kr(Amplitude.kr(sig), 0.1);
 		var osc = Splay.ar(Pulse.ar(Array.series(10, freq, 5))) * thres;
 		sig = osc + BPeakEQ.ar(BBandStop.ar(sig, LFNoise1.kr(modFreq, bsMul, bsAdd), bsBw), 80, 3, -2);
- 		HPF.ar(Splay.ar(sig),60,amp.poll) * LFNoise1.ar(ampMod).range(0.3,1.1)
+ 		HPF.ar(Splay.ar(sig),60,amp) * LFNoise1.ar(ampMod).range(0.3,1.1)
 	})
 };
 
@@ -107,11 +107,11 @@ synthesis.shimr = {|ev, name=\shimr|
 // 08. [ drol ]
 
 synthesis.drol = {|ev, name=\pmrol|
-	NF(name, { arg freq=60, amp=1.0 ;
+	NF(name, { arg freq=60, clipfreq=12, clipfrom=2, clipto=16, lffreq=6, lffrom=100, lfto=3000, amp=1.0 ;
 		HPF.ar(PMOsc.ar(freq,
 			Lag.ar(
-				LFDClipNoise.ar(12).range(2,16), 0.01), [1000, 2000]).fold2(SinOsc.ar(freq)),
-				LFNoise1.ar(6).range(100,3000), 0.3) * amp
+				LFDClipNoise.ar(clipfreq).range(clipfrom,clipto), 0.01), [1000, 2000]).fold2(SinOsc.ar(freq)),
+				LFNoise1.ar(lffreq).range(lffrom,lfto), 0.3) * amp
 	})
 };
 
@@ -128,10 +128,10 @@ synthesis.calib = {|ev, name=\calib|
 // 10. [ sofbas ]
 
 synthesis.sofbas = {|ev, name=\sofbas|
-	NF(name, {|freq=66, amp=1.0|
+	NF(name, {|freq=66, amp=1.0, lffreq=12, resfreq=10.1, resfrom=0.92, resto=1.0135, lpf=50, lpfrq=4|
 		BPeakEQ.ar(DFM1.ar(SinOsc.ar([freq,freq*1.09] *
-			LFNoise0.ar(12).range(0.98,1.02),0,0.1),300,
-			SinOsc.kr(10.1).range(0.92,1.0135),1,0,0.003,0.5), 50,4,-9) * 1.7 * amp
+			LFNoise0.ar(lffreq).range(0.98,1.02),0,0.1),300,
+			SinOsc.kr(resfreq).range(resfrom,resto),1,0,0.003,0.5), lpf,lpfrq,-9) * 1.7 * amp
 	})
 };
 
