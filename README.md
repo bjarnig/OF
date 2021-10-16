@@ -11,9 +11,9 @@ A small SuperCollider framework that consists of four main process categories:
 
 Quarks.install("https://github.com/bjarnig/OF")
 
-/*
 
-01 - Dynamic waveform generation and transformations.
+/*
+    Dynamic waveform generation and transformations.
 
 */
 
@@ -31,10 +31,7 @@ a.set(\sdm, rrand(0.1,0.5),\mod, rrand(1,10));
 // Modulate a parameter
 a.modulate(\sdm, { LFNoise1.kr(10, 0.1, 0.2) } );
 
-// Append a transformation operation 
-a.transform( o.processing.wloss() );
-
-// Another transformation
+// Append a transformation operation
 a.transform( o.processing.foldorm() );
 
 // Parameter movement for amplitude
@@ -48,9 +45,10 @@ o.action.interrupt(\op);
 
 )
 
+
 /*
 
-02 - Transformation sequences and pipelines
+   Transformation sequences and pipelines
 
 */
 
@@ -82,27 +80,59 @@ a.transform(o.pr.diffuse).play
 
 )
 
+
 ( /* Nested pipelines with parameters and duration */
 
 o = OF(this);
 
 a = o.waveform.costa(\co);
+
 a.stackpd([
 	[\bfold, 3, (\bffreq: 20, \bfstop: 100)],
-	[\lfdnamp, 14, (\lfamod: 0.8)],
-	[\gravch, 21, (\grto: 2000)]
+	[\drift, 14, ()],
+	[\wloss, 21, ()],
+	[\nmod, 12, (\nfreq: 1000)]
 ], o);
 
 b = o.waveform.hectn(\pl);
 b.stack([\clip, \minsaw, \bfold, \minsaw].scramble, o);
 
 c = o.waveform.dramp(\dramp);
-c.stackd([\clip, \clip, \minsaw, \gravch, \bfold], o, 3, 5);
+c.stackd([\clip, \clip, \minsaw, \minsaw, \minsaw, \bfold], o, 3, 5);
 
 // Submit the three pipelines to a switching algorithm
 o.behaviour.switchx( OFPool[a,b,c] ).play
 
 )
+
+
+
+/*
+
+  Direct access, observers and reactions for content-based triggers and actions.
+
+*/
+
+( /* Pipelines and Observers */
+
+// Start OF
+o = OF(this);
+
+// Generate a waveform
+a = o.waveform.foral(\fo); a.play;
+
+// Couple an observer
+o.observe.adapt(\fo);
+
+// Apply disturbance
+o.action.disturb(\fo);
+
+// Attach a behaviour
+o.behaviour.mfb(\fo).play
+
+)
+
+
 
 ( /* 10 random pipelines with 4 processes and overlap behaviour */
 

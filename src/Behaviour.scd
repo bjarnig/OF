@@ -210,7 +210,7 @@ behaviour.interp = {|ev,node, param, from, to, env, dur=10, step=0.1, times=inf,
 			if(emit.notNil, { emit.(node.key) });
 		};
 
-		sif(cb.notNil, { cb.() })
+		if(cb.notNil, { cb.() })
 
 	}.fork
 };
