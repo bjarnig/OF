@@ -35,7 +35,7 @@ observers.vesipeak = {|ev, name=\encore, out=0|
 		peak = Peak.ar(snd);
 		peakFollow = PeakFollower.ar(snd);
 		runningMax = RunningMax.ar(snd);
-		Vesica.ar(runningMax.linlin(0, 1, 20, 100), surface:0.5, entropy:13, lop:4000, mul:  peakFollow)
+		OFVesica.ar(runningMax.linlin(0, 1, 20, 100), surface:0.5, entropy:13, lop:4000, mul:  peakFollow)
 		* LFDNoise1.ar(runningMax.linlin(0, 1, 0.5, 6)).exprange(0.5, 3.0) * 2;
 	}).play(out)
 };
