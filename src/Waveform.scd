@@ -94,12 +94,12 @@ waveform.leaf = {|ev, name=\leaf, length=30|
 	}
 };
 
-waveform.specs[\serin] = Dictionary();
-waveform.specs[\serin][\sdm] = ControlSpec(0.001,10,'lin');
-waveform.specs[\serin][\repeats] = ControlSpec(1,16,'lin');
-waveform.specs[\serin][\from] = ControlSpec(1,20,'lin');
-waveform.specs[\serin][\to] = ControlSpec(1,20,'lin');
-waveform.specs[\serin][\mod] = ControlSpec(1,64,'lin');
+waveform.specs[\leaf] = Dictionary();
+waveform.specs[\leaf][\length] = ControlSpec(0.001,10,'lin');
+waveform.specs[\leaf][\repeats] = ControlSpec(1,16,'lin');
+waveform.specs[\leaf][\from] = ControlSpec(1,20,'lin');
+waveform.specs[\leaf][\to] = ControlSpec(1,20,'lin');
+waveform.specs[\leaf][\mod] = ControlSpec(1,64,'lin');
 
 waveform.foral = {|ev, name=\foral|
 	NF(name)[0] = {|ser=500,step=2.5,amp=1.0,sdm=0.5|
