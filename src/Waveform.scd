@@ -95,7 +95,7 @@ waveform.leaf = {|ev, name=\leaf, length=30|
 };
 
 waveform.specs[\leaf] = Dictionary();
-waveform.specs[\leaf][\length] = ControlSpec(0.001,10,'lin');
+waveform.specs[\leaf][\sdm] = ControlSpec(0.001,10,'lin');
 waveform.specs[\leaf][\repeats] = ControlSpec(1,16,'lin');
 waveform.specs[\leaf][\from] = ControlSpec(1,20,'lin');
 waveform.specs[\leaf][\to] = ControlSpec(1,20,'lin');
