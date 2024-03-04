@@ -11,6 +11,8 @@
 
 var synthesis = ();
 
+synthesis.specs = Dictionary();
+
 // 01. [ silk ]
 
 synthesis.silk = {|ev, name=\silk|
@@ -22,6 +24,14 @@ synthesis.silk = {|ev, name=\silk|
 		Splay.ar(sig * LFNoise1.ar(modFreq3).range(0.3,1.1) * amp)
 	})
 };
+
+synthesis.specs[\silk] = Dictionary();
+synthesis.specs[\silk][\freq] = ControlSpec(545.0,2180,'lin');
+synthesis.specs[\silk][\harms] = ControlSpec(85.0,340,'lin');
+synthesis.specs[\silk][\modFreq] = ControlSpec(4.5,18,'lin');
+synthesis.specs[\silk][\modFreq2] = ControlSpec(0.5,2,'lin');
+synthesis.specs[\silk][\modFreq3] = ControlSpec(1.55,6.2,'lin');
+
 
 // 02. [ vsaw ]
 
@@ -36,6 +46,15 @@ synthesis.vsaw = {|ev, name=\vsaw|
 	})
 };
 
+synthesis.specs[\vsaw] = Dictionary();
+synthesis.specs[\vsaw][\freq] = ControlSpec(45.0,180,'lin');
+synthesis.specs[\vsaw][\amp] = ControlSpec(0.5,2.0,'lin');
+synthesis.specs[\vsaw][\modFreq] = ControlSpec(0.25,1.0,'lin');
+synthesis.specs[\vsaw][\ampMod] = ControlSpec(0.4,1.6,'lin');
+synthesis.specs[\vsaw][\bsMul] = ControlSpec(300.0,1200,'lin');
+synthesis.specs[\vsaw][\bsAdd] = ControlSpec(400.0,1600,'lin');
+synthesis.specs[\vsaw][\bsBw] = ControlSpec(4.0,16,'lin');
+
 
 // 03. [ depfm ]
 
@@ -49,6 +68,17 @@ synthesis.depfm = {|ev, name=\depfm|
 		PMOsc.ar(LFCub.kr([freq, freq/2], 0, mul, add), modFreq, index) * 0.3 * amp * 0.7
 	})
 };
+
+synthesis.specs[\depfm] = Dictionary();
+synthesis.specs[\depfm][\freqMin] = ControlSpec(0.5,2,'lin');
+synthesis.specs[\depfm][\freqMax] = ControlSpec(5.0,20,'lin');
+synthesis.specs[\depfm][\mul] = ControlSpec(10.0,40,'lin');
+synthesis.specs[\depfm][\add] = ControlSpec(50.0,200,'lin');
+synthesis.specs[\depfm][\rate] = ControlSpec(0.5,2,'lin');
+synthesis.specs[\depfm][\modFreq] = ControlSpec(2050.0,8200,'lin');
+synthesis.specs[\depfm][\index] = ControlSpec(0.1,0.4,'lin');
+synthesis.specs[\depfm][\amp] = ControlSpec(0.5,2,'lin');
+
 
 // 04. [ osom ]
 
@@ -65,6 +95,20 @@ synthesis.osom = {|ev, name=\osom|
 	})
 };
 
+synthesis.specs[\osom] = Dictionary();
+synthesis.specs[\osom][\rate] = ControlSpec(1.0,4,'lin');
+synthesis.specs[\osom][\trigMin] = ControlSpec(0.005,0.02,'lin');
+synthesis.specs[\osom][\trigMax] = ControlSpec(5.0,20,'lin');
+synthesis.specs[\osom][\shift] = ControlSpec(0.01,0.04,'lin');
+synthesis.specs[\osom][\decay] = ControlSpec(0.05,0.2,'lin');
+synthesis.specs[\osom][\initx] = ControlSpec(0.15,0.6,'lin');
+synthesis.specs[\osom][\inity] = ControlSpec(0.05,0.2,'lin');
+synthesis.specs[\osom][\initz] = ControlSpec(0.1,0.4,'lin');
+synthesis.specs[\osom][\freq] = ControlSpec(300.0,1200,'lin');
+synthesis.specs[\osom][\bw] = ControlSpec(4.0,16,'lin');
+synthesis.specs[\osom][\amp] = ControlSpec(0.5,2,'lin');
+
+
 // 05. [ gravit ]
 
 synthesis.gravit = {|ev, name=\gravit|
@@ -76,6 +120,13 @@ synthesis.gravit = {|ev, name=\gravit|
 		HPF.ar(BBandStop.ar(LeastChange.ar(GravityGrid.ar(0, [freq/2, freq]), OFLoFM.ar(freq)), Lag.kr(trig), 12), 40) * amp
 	})
 };
+
+synthesis.specs[\gravit] = Dictionary();
+synthesis.specs[\gravit][\rate] = ControlSpec(6.0,24,'lin');
+synthesis.specs[\gravit][\trigMin] = ControlSpec(200.0,800,'lin');
+synthesis.specs[\gravit][\trigMax] = ControlSpec(500.0,2000,'lin');
+synthesis.specs[\gravit][\freq] = ControlSpec(5.0,20,'lin');
+
 
 // 06. [ demwi ]
 
@@ -96,6 +147,14 @@ synthesis.demwi = {|ev, name=\demwi|
 	})
 };
 
+synthesis.specs[\demwi] = Dictionary();
+synthesis.specs[\demwi][\rate] = ControlSpec(1.5,6,'lin');
+synthesis.specs[\demwi][\trigMin] = ControlSpec(9.0,36,'lin');
+synthesis.specs[\demwi][\trigMax] = ControlSpec(10.0,40,'lin');
+synthesis.specs[\demwi][\times] = ControlSpec(5.0,20,'lin');
+synthesis.specs[\demwi][\delay] = ControlSpec(0.025,0.1,'lin');
+synthesis.specs[\demwi][\decay] = ControlSpec(0.25,1.0,'lin');
+
 // 07. [ shimr ]
 
 synthesis.shimr = {|ev, name=\shimr|
@@ -103,6 +162,12 @@ synthesis.shimr = {|ev, name=\shimr|
 		SinOscFB.ar(LFNoise1.ar(0.001).range(freqFrom, freqTo)*2, feedb).fold2(SinOsc.ar( modFreq / [1,1.2])) * 0.1 * amp
 	})
 };
+
+synthesis.specs[\shimr] = Dictionary();
+synthesis.specs[\shimr][\modFreq] = ControlSpec(4.0,16,'lin');
+synthesis.specs[\shimr][\feedb] = ControlSpec(0.005,0.02,'lin');
+synthesis.specs[\shimr][\freqFrom] = ControlSpec(1070.0,4280,'lin');
+synthesis.specs[\shimr][\freqTo] = ControlSpec(1082.5,4330,'lin');
 
 // 08. [ drol ]
 
@@ -115,6 +180,15 @@ synthesis.drol = {|ev, name=\pmrol|
 	})
 };
 
+synthesis.specs[\pmrol] = Dictionary();
+synthesis.specs[\pmrol][\freq] = ControlSpec(30.0,120,'lin');
+synthesis.specs[\pmrol][\clipfreq] = ControlSpec(6.0,24,'lin');
+synthesis.specs[\pmrol][\clipfrom] = ControlSpec(1.0,4,'lin');
+synthesis.specs[\pmrol][\clipto] = ControlSpec(8.0,32,'lin');
+synthesis.specs[\pmrol][\lffreq] = ControlSpec(3.0,12,'lin');
+synthesis.specs[\pmrol][\lffrom] = ControlSpec(50.0,200,'lin');
+synthesis.specs[\pmrol][\lfto] = ControlSpec(1500.0,6000,'lin');
+
 // 09. [ calib ]
 
 synthesis.calib = {|ev, name=\calib|
@@ -124,6 +198,18 @@ synthesis.calib = {|ev, name=\calib|
 		LPF.ar(BHiPass4.ar(signal * 0.3, hip), lop) * amp;
 	})
 };
+
+synthesis.specs[\calib] = Dictionary();
+synthesis.specs[\calib][\freq] = ControlSpec(5.0,20,'lin');
+synthesis.specs[\calib][\ch] = ControlSpec(0.15,0.6,'lin');
+synthesis.specs[\calib][\hip] = ControlSpec(250.0,1000,'lin');
+synthesis.specs[\calib][\lop] = ControlSpec(3000.0,12000,'lin');
+synthesis.specs[\calib][\surface] = ControlSpec(5e-05,0.0002,'lin');
+synthesis.specs[\calib][\envTime] = ControlSpec(0.5,2,'lin');
+synthesis.specs[\calib][\envShape] = ControlSpec(0.5,2,'lin');
+synthesis.specs[\calib][\entropy] = ControlSpec(0.5,2,'lin');
+
+
 
 // 10. [ sofbas ]
 
@@ -135,6 +221,17 @@ synthesis.sofbas = {|ev, name=\sofbas|
 	})
 };
 
+synthesis.specs[\sofbas] = Dictionary();
+synthesis.specs[\sofbas][\freq] = ControlSpec(33.0,132,'lin');
+synthesis.specs[\sofbas][\lffreq] = ControlSpec(6.0,24,'lin');
+synthesis.specs[\sofbas][\resfreq] = ControlSpec(5.05,20.2,'lin');
+synthesis.specs[\sofbas][\resfrom] = ControlSpec(0.46,1.84,'lin');
+synthesis.specs[\sofbas][\resto] = ControlSpec(0.50675,2.027,'lin');
+synthesis.specs[\sofbas][\lpf] = ControlSpec(25.0,100,'lin');
+synthesis.specs[\sofbas][\lpfrq] = ControlSpec(2.0,8,'lin');
+
+
+
 // 11. [ brom ]
 
 synthesis.brom = {|ev, name=\brom|
@@ -142,6 +239,10 @@ synthesis.brom = {|ev, name=\brom|
 		OFBromate.ar(freq, 4, 6) * amp
 	})
 };
+
+synthesis.specs[\brom] = Dictionary();
+synthesis.specs[\brom][\freq] = ControlSpec(33.0,132,'lin');
+
 
 // 12. [ fmdin ]
 
@@ -151,6 +252,10 @@ synthesis.fmdin = {|ev, name=\fmdin|
 	})
 };
 
+synthesis.specs[\fmdin] = Dictionary();
+synthesis.specs[\fmdin][\freq] = ControlSpec(33.0,132,'lin');
+synthesis.specs[\fmdin][\mod] = ControlSpec(4.0,16,'lin');
+
 // 13. [ nanite ]
 
 synthesis.nanite = {|ev, name=\nanite|
@@ -159,6 +264,12 @@ synthesis.nanite = {|ev, name=\nanite|
 	})
 };
 
+synthesis.specs[\nanite] = Dictionary();
+synthesis.specs[\nanite][\freq] = ControlSpec(20.0,80,'lin');
+synthesis.specs[\nanite][\mod] = ControlSpec(7.05,28.2,'lin');
+synthesis.specs[\nanite][\lpf] = ControlSpec(4000.0,16000,'lin');
+
+
 // 14. [ dagal ]
 
 synthesis.dagal = {|ev, name=\dagal|
@@ -166,5 +277,9 @@ synthesis.dagal = {|ev, name=\dagal|
 		OFDagal.ar(57, rate:2, resTo:1, lpf:800, mul:2) * amp
 	})
 };
+
+synthesis.specs[\dagal] = Dictionary();
+synthesis.specs[\dagal][\freq] = ControlSpec(28.5,114,'lin');
+synthesis.specs[\dagal][\amp] = ControlSpec(0.5,2);
 
 )
