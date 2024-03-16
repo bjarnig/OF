@@ -133,6 +133,28 @@ NF : Ndef {
 
 		}.fork
 	}
+
+	*stopAll {
+		NF.all.do{|a|a.stop; }
+	}
+
+	*mixer {
+		var x = NdefMixer(Server.default).playingProxies;
+		x.do{|a|a.postln }
+	}
+
+	*getPlaying {
+		^NF.all['localhost'].keys.select { |item| NF(item).monitor.isPlaying };
+	}
+
+	*printPlaying {
+		var all = NF.all['localhost'].keys.select { |item| NF(item).monitor.isPlaying };
+		all.do{|item|item.postln}
+	}
+
+	*xf {|obj,time|
+		NF(obj).fadeTime = time;
+	}
 }
 
 OFPool : List {

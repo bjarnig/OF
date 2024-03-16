@@ -19,10 +19,10 @@ actions.interrupt = {|ev, name, freq=10, output=0|
 		NF(local, {
 			var lpf=150, hpf=8000, gaina=1000, gainb=200, son = NF(name).ar;
 
-			HPF.ar(SoftClipAmp8.ar(son, pregain:gaina)
+			BPeakEQ.ar( HPF.ar(SoftClipAmp8.ar(son, pregain:gaina)
 			* EnvGen.ar(Env([0.2,0.1,0.0], [3,4,15])), Lag.ar(LFNoise0.ar(f1).range(hpf, hpf*2))) +
 			BBandStop.ar(LPF.ar(SoftClipAmp8.ar(son, pregain:gainb)
-			* EnvGen.ar(Env([0.2,0.1,0.0], [2,5,15])), Lag.ar(LFNoise0.ar(f2).range(lpf*0.25, lpf))),80, 0.1);
+				* EnvGen.ar(Env([0.2,0.1,0.0], [2,5,15])), Lag.ar(LFNoise0.ar(f2).range(lpf*0.25, lpf))),80, 0.1), 100, 1, -3) * 0.7;
 
 		}).play(output);
 

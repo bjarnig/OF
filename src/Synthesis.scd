@@ -282,4 +282,6 @@ synthesis.specs[\dagal] = Dictionary();
 synthesis.specs[\dagal][\freq] = ControlSpec(28.5,114,'lin');
 synthesis.specs[\dagal][\amp] = ControlSpec(0.5,2);
 
+synthesis
+
 )
