@@ -3,7 +3,9 @@ A small SuperCollider framework that consists of four main process categories:
 * Synthesis processes with dynamic waveform generation
 * Atomic sound transformations that adapt to incoming signals
 * Operation pipelines and algorithms to control and generate them
-* Direct access, observers and reactions for content-based triggers and actions 
+* Direct access, observers and reactions for content-based triggers and actions
+
+> [!IMPORTANT] You will need to install these plugins first: https://github.com/supercollider/sc3-plugins. Instructions for installation can be found on their repository.
 
 ```javascript
 
