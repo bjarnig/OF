@@ -5,6 +5,9 @@ A small SuperCollider framework that consists of four main process categories:
 * Operation pipelines and algorithms to control and generate them
 * Direct access, observers and reactions for content-based triggers and actions
 
+Synthesis and Operation Flows, paper accessible here:
+https://bit.ly/3p4GBQb
+
 > [!IMPORTANT]
 > You will need to install these plugins first: https://github.com/supercollider/sc3-plugins. Instructions for installation can be found on their repository.
 
