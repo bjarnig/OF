@@ -1,6 +1,6 @@
 OF {
 
-	var <>basePath, <>synthesis, <>processing, <>control, <>behaviour, <>action, <>observe, <>waveform, <>st, <>pr, <>cn, <>bh, <>ac, <>ob, <>wf;
+	var <>basePath, <>synthesis, <>processing, <>control, <>behaviour, <>action, <>observe, <>waveform, <>st, <>pr, <>cn, <>bh, <>ac, <>ob, <>wf, <>lc;
 
 	*new {|interpreter|
 		^super.newCopyArgs().init(interpreter);
@@ -26,6 +26,8 @@ OF {
 		ob = interpreter.compileFile(basePath ++ "Observe.scd").value;
 		wf = interpreter.compileFile(basePath ++ "Waveform.scd").value;
 
+		lc = LC();
+
 		^this
 	}
 
@@ -34,7 +36,7 @@ OF {
 	}
 
 	actionNames {
-		^this.synthesis.keys.asArray
+		^this.action.keys.asArray
 	}
 
 	waveformNames {
@@ -45,8 +47,20 @@ OF {
 		^this.processing.keys.asArray
 	}
 
+	controlNames {
+		^this.control.keys.asArray
+	}
+
+	behaviourNames {
+		^this.behaviour.keys.asArray
+	}
+
 	choosePr {|count|
 		^count.collect{ this.processingNames.choose };
+	}
+
+	chooseSt {|count|
+		^count.collect{ this.synthesisNames.choose };
 	}
 
 	*key {|node, name|

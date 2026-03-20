@@ -263,4 +263,80 @@ processing.lfddel = {|ev|
 	}
 };
 
+processing.bpspread = {|ev, bands=4|
+	{|in, bpbw=0.2, bpspeed=1.0|
+		var freqs = Array.geom(bands, 100, 3.2);
+		var filtered = freqs.collect{|freq, i|
+			BBandPass.ar(in, freq, bpbw, SinOsc.ar(0.01 * (i+1) * bpspeed).range(0.0, 1.0))
+		};
+		Splay.ar(filtered) * (bands * 2)
+	}
+};
+
+processing.bprand = {|ev, bands=4|
+	{|in, bpbw=0.2, bpspeed=0.5|
+		var low = Array.rand(bands, 10, 500);
+		var high = Array.rand(bands, 1500, 5000);
+		var filtered = (low ++ high).collect{|freq, i|
+			BBandPass.ar(in, freq, bpbw, LFNoise1.ar(bpspeed * (0.2 / (i+1))).range(0.0, 1.0))
+		};
+		filtered.sum * 4
+	}
+};
+
+processing.pvsmear = {|ev|
+	{|in, pvsmear=4|
+		var chain = FFT(LocalBuf(2048), in);
+		IFFT(PV_MagSmear(chain, pvsmear))
+	}
+};
+
+processing.pvfreeze = {|ev|
+	{|in, pvrate=2|
+		var chain = FFT(LocalBuf(2048), in);
+		IFFT(PV_Freeze(chain, LFPulse.kr(pvrate)))
+	}
+};
+
+processing.dustlay = {|ev|
+	{|in, dldens=3, dldecay=0.1, dlmix=0.35|
+		var tex = Splay.ar(PinkNoise.ar * Decay.ar(Dust.ar(SinOsc.kr(0.08).range(1, dldens) ! 8), dldecay));
+		XFade2.ar(in, in + tex, dlmix)
+	}
+};
+
+processing.excess = {|ev|
+	{|in, exfreq=80, exmod=10|
+		HPF.ar(
+			BBandStop.ar(
+				in.excess(SinOsc.ar([exfreq+6, exfreq+4, exfreq+2, exfreq+8])),
+				LFNoise1.ar(exmod).range(100, 900),
+				SinOsc.ar(20).range(7, 20)
+			), 80
+		) * 0.5
+	}
+};
+
+processing.fbdelay = {|ev|
+	{|in, fbamt=0.85, fbdelf=0.05, fbdelt=0.4, fblpff=300, fblpft=6000|
+		var effect = in + LocalIn.ar(2);
+		effect = DelayC.ar(effect, 1.0, LFNoise1.ar(0.3).range(fbdelf, fbdelt));
+		effect = LPF.ar(effect, LFNoise1.ar(0.5).range(fblpff, fblpft));
+		LocalOut.ar(effect * fbamt);
+		in + (effect * (1 - fbamt))
+	}
+};
+
+processing.centfilt = {|ev, dffreq=0.5, dffiltf=50, dffiltt=8000|
+	{|in|
+		var chain = FFT(LocalBuf(2048), in);
+		var centroid = SpecCentroid.kr(chain) * LFNoise1.kr(dffreq).exprange(0.001, 0.2);
+		var sig = in.excess(SinOsc.ar(centroid * 0.08));
+		DFM1.ar(sig, LFDNoise1.ar(centroid * 0.05).range(dffiltf, dffiltt),
+			SinOsc.kr(centroid * 0.05).range(0.82, 0.9), 1, 0, 0.005, 0.7)
+	}
+};
+
+processing
+
 )

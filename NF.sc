@@ -155,6 +155,22 @@ NF : Ndef {
 	*xf {|obj,time|
 		NF(obj).fadeTime = time;
 	}
+
+	elastic {
+		this.reshaping = \elastic;
+	}
+
+	route {|src|
+		src <>> this;
+	}
+
+	master {|ndefs, levels|
+		this[0] = {
+			var sources = ndefs.collect{|nf, i| nf.ar * (levels[i] ? 0.5) };
+			Mix(sources)
+		};
+		this.play;
+	}
 }
 
 OFPool : List {
@@ -193,6 +209,14 @@ OFPool : List {
 
 	play {
 		this.array.do{|nf| nf.play }
+	}
+
+	elastic {
+		this.array.do{|nf| nf.elastic }
+	}
+
+	stop {
+		this.array.do{|nf| nf.stop }
 	}
 }
 
